@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <title>다중 유저 상태에서 초대하기, 수락하기, 거절하기 - PlayRTC Test</title>
+  <meta charset="utf-8">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .local-video {
+      width: 80px;
+      height: 60px;
+      z-index: 10;
+      position: relative;
+      top: -100px;
+      right: 30px;
+    }
+
+    .remote-video {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 320px;
+      height: 240px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-12">
+        <h1 class="page-header">다중 유저 상태에서 초대하기, 수락하기, 거절하기 - PlayRTC Test</h1>
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="h3">Caller</h2>
+        <h3 class="h4">채널 생성 및 입장</h3>
+        <form class="form-inline">
+          <div class="form-group">
+            <label class="sr-only" for="createChannelId">Channel Id</label>
+            <input class="form-control" type="text" id="createChannelId" placeholder="채널을 생성하세요." value="" readonly>
+          </div>
+          <button class="btn btn-default" id="createChannel">
+            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> 채널 생성
+          </button>
+        </form>
+
+        <video class="remote-video center-block" id="callerRemoteVideo"></video>
+        <video class="local-video pull-right" id="callerLocalVideo"></video>
+
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="h3">Callee</h2>
+
+        <h3 class="h4">채널 입장</h3>
+        <form class="form-inline">
+          <div class="form-group">
+            <label class="sr-only" for="connectChannelId">Channel Id</label>
+            <input class="form-control" type="text" id="connectChannelId" placeholder="ChannelId를 입력하세요." value="">
+          </div>
+          <button class="btn btn-default" id="connectChannel">
+            <span class="glyphicon glyphicon-earphone" aria-hidden="true"> 채널 입장
+          </button>
+        </form>
+
+        <video class="remote-video center-block" id="calleeRemoteVideo"></video>
+        <video class="local-video pull-right" id="calleeLocalVideo"></video>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
+  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
+
+  <script src="http://www.playrtc.com/sdk/js/playrtc.js"></script>
+  <script>
+    'use strict';
+
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelId = document.querySelector('#createChannelId');
+    var appCaller;
+
+    appCaller = new PlayRTC({
+      projectKey: "aee5f87e-c376-4f7e-b470-5c4ba725186d",
+      localVideoTarget: "callerLocalVideo",
+      remoteVideoTarget: "callerRemoteVideo",
+      ring: true
+    });
+
+    appCaller.on('connectChannel', function(channelId) {
+      createChannelId.value = channelId;
+    });
+
+    appCaller.on('ring', function(pid, uid) {
+      if (window.confirm("수락하시겠습니까?")) {
+        appCaller.accept(pid);
+      } else {
+        appCaller.reject(pid);
+      }
+    });
+
+    appCaller.on('accept', function() {
+      console.log("상대방이 수락하였습니다.");
+    });
+
+    appCaller.on('reject', function() {
+      console.log('상대방이 거절하였습니다.');
+    });
+
+    createChannelButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      appCaller.createChannel();
+    }, false);
+  </script>
+  <script>
+    'use strict';
+
+    var connectChannelId = document.querySelector('#connectChannelId');
+    var connectChannelButton = document.querySelector('#connectChannel');
+    var appCallee;
+
+    appCallee = new PlayRTC({
+      projectKey: "aee5f87e-c376-4f7e-b470-5c4ba725186d",
+      localVideoTarget: "calleeLocalVideo",
+      remoteVideoTarget: "calleeRemoteVideo",
+      ring: true
+    });
+
+    appCallee.on('ring', function(pid, uid) {
+      if (window.confirm('수락하시겠습니까?')) {
+        appCallee.accept(pid);
+      } else {
+        appCallee.reject(pid);
+      }
+    });
+
+    connectChannelButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      var channelId = connectChannelId.value;
+      if (!channelId) return;
+      appCallee.connectChannel(channelId);
+    }, false);
+  </script>
+</body>
+
+</html>
