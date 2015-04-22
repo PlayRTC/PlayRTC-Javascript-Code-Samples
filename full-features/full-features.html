@@ -17,6 +17,15 @@
     .chat-timeline {
       height: 200px;
       font-size: 9px;
+      overflow: auto;
+    }
+
+    .chat-timeline .local{
+      color: blue;
+    }
+
+    .chat-timeline .remote{
+      color: red;
     }
   </style>
 </head>
@@ -71,12 +80,6 @@
         <div class="well">
           <video class="remote-video center-block" id="remoteVideo"></video>
 
-          <div class="progress hide" id="getFileFromRemoteBarWrapper">
-            <div class="progress-bar" id="getFileFromRemoteBar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-              <span class="sr-only">60% Complete</span>
-            </div>
-          </div>
-
           <div class="text-center hide">
             <button class="btn btn-default btn-sm" id="saveFileFromRemote">
               <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
@@ -119,8 +122,8 @@
           <video class="local-video center-block" id="localVideo"></video>
 
           <div class="progress" id="sendFileToRemoteBarWrapper">
-            <div class="progress-bar" id="sendFileToRemoteBar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-              <span class="sr-only">60% Complete</span>
+            <div class="progress-bar" id="sendFileToRemoteBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0px;">
+              <!--<span class="sr-only">60% Complete</span>-->
             </div>
           </div>
 
@@ -168,7 +171,7 @@
           </div>
         </form>
 
-        <div class="well chat-timeline">
+        <div class="well chat-timeline" id="timeline" style="overflow: auto;">
         </div>
 
         <form>
@@ -229,6 +232,9 @@
     var stopLocalVoiceRecord =  document.querySelector('#stopLocalVoiceRecord');
     var saveLocalVoiceRecord =  document.querySelector('#saveLocalVoiceRecord');
 
+    var sendText = document.querySelector('#sendText');
+    var sendFile = document.querySelector('#sendFile');
+
     var recordRemoteVideo;
     var recordRemoteVoice;
     var recordLocalVideo;
@@ -239,6 +245,50 @@
       projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
       localVideoTarget: "localVideo",
       remoteVideoTarget: "remoteVideo"
+    });
+
+    app.on('connectChannel', function(channelId) {
+      createChannelId.value = channelId;
+      getChannelList();
+    });
+
+    app.on('disconnectChannel', function(channelId) {
+      createChannelId.value = "";
+      getChannelList();
+    });
+
+    app.on('otherDisconnectChannel', function(channelId) {
+      document.getElementById("remoteVideo").src = "";
+      document.getElementById("timeline").innerHTML = "";
+      getChannelList();
+    });
+
+    app.on('addDataStream', function(pid, uid, dataChannel) {
+      dataChannel.on('message', function(message) {
+        if (message.type === 'text') {
+          var el = document.getElementById("timeline");
+          el.innerHTML = el.innerHTML + '<p class="local">' + message.data + '</p>';
+        }
+        else{
+          PlayRTC.utils.fileDownload(message.blob, message.fileName);
+          var el = document.querySelector('#sendFileToRemoteBar');
+          el.style.width = '0px';
+        }
+      });
+
+      dataChannel.on('progress', function(message) {
+        if(message.totalSize === message.fragSize){
+          return;
+        }
+        var width = document.querySelector('#sendFileToRemoteBarWrapper').clientWidth;
+        var el = document.querySelector('#sendFileToRemoteBar');
+        var progressbar = (width / message.fragCount) * (message.fragIndex + 1);
+        el.style.width = progressbar + 'px';
+      });
+
+      dataChannel.on('error', function(e) {
+        alert('에러가 발생했습니다.');
+      });
     });
 
     function getChannelList(){
@@ -267,21 +317,6 @@
       var channelId = e.target.innerText;
       app.connectChannel(channelId);
     }, false);
-
-    app.on('connectChannel', function(channelId) {
-      createChannelId.value = channelId;
-      getChannelList();
-    });
-
-    app.on('disconnectChannel', function(channelId) {
-      createChannelId.value = "";
-      getChannelList();
-    });
-
-    app.on('otherDisconnectChannel', function(channelId) {
-      document.getElementById("remoteVideo").src = "";
-      getChannelList();
-    });
 
     createChannelButton.addEventListener('click', function(e) {
       e.preventDefault();
@@ -368,7 +403,6 @@
       }
     }, false);
 
-
     startLocalVoiceRecord.addEventListener('click', function(e) {
       e.preventDefault();
       var media = app.getMedia();
@@ -392,6 +426,29 @@
       if(recordLocalVoice){
           PlayRTC.utils.fileDownload(recordLocalVoice, "recordLocalVoice.wav");
       }
+    }, false);
+
+    sendText.addEventListener('click', function(e) {
+      e.preventDefault();
+      var msg = document.getElementById("sendMessage").value;
+      if(msg){
+        app.dataSend(msg);
+        var el = document.getElementById("timeline");
+        el.innerHTML = el.innerHTML + '<p class="remote">' + msg + '</p>';
+      }
+
+      document.getElementById("sendMessage").value = "";
+    }, false);
+
+    sendFile.addEventListener('click', function(e) {
+      e.preventDefault();
+      var el = document.getElementById('seclectFile');
+      var val = el.files[0];
+      if (!val) {
+        return false;
+      }
+      app.dataSend(val);
+      el.value = '';
     }, false);
   </script>
 </body>
