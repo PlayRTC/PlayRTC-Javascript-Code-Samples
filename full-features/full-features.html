@@ -118,7 +118,7 @@
         <div class="well">
           <video class="local-video center-block" id="localVideo"></video>
 
-          <div class="progress hide" id="sendFileToRemoteBarWrapper">
+          <div class="progress" id="sendFileToRemoteBarWrapper">
             <div class="progress-bar" id="sendFileToRemoteBar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
               <span class="sr-only">60% Complete</span>
             </div>
@@ -218,10 +218,25 @@
     var quitChannel = document.querySelector('#quitChannel');
     var startRemoteVideoRecord = document.querySelector('#startRemoteVideoRecord');
     var stopRemoteVideoRecord = document.querySelector('#stopRemoteVideoRecord');
+    var saveRemoteVideoRecord = document.querySelector('#saveRemoteVideoRecord');
+    var startRemoteVoiceRecord = document.querySelector('#startRemoteVoiceRecord');
+    var stopRemoteVoiceRecord = document.querySelector('#startRemoteVoiceRecord');
+    var saveRemoteVoiceRecord = document.querySelector('#saveRemoteVoiceRecord');
+    var startLocalVideoRecord =  document.querySelector('#startLocalVideoRecord');
+    var stopLocalVideoRecord =  document.querySelector('#stopLocalVideoRecord');
+    var saveLocalVideoRecord =  document.querySelector('#saveLocalVideoRecord');
+    var startLocalVoiceRecord =  document.querySelector('#startLocalVoiceRecord');
+    var stopLocalVoiceRecord =  document.querySelector('#stopLocalVoiceRecord');
+    var saveLocalVoiceRecord =  document.querySelector('#saveLocalVoiceRecord');
+
+    var recordRemoteVideo;
+    var recordRemoteVoice;
+    var recordLocalVideo;
+    var recordLocalVoice;
     var app;
 
     app = new PlayRTC({
- ;     projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
+      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
       localVideoTarget: "localVideo",
       remoteVideoTarget: "remoteVideo"
     });
@@ -263,6 +278,11 @@
       getChannelList();
     });
 
+    app.on('otherDisconnectChannel', function(channelId) {
+      document.getElementById("remoteVideo").src = "";
+      getChannelList();
+    });
+
     createChannelButton.addEventListener('click', function(e) {
       e.preventDefault();
       app.createChannel();
@@ -277,7 +297,7 @@
       e.preventDefault();
       var peers = app.getAllPeer();
       if(peers.length){
-          peers[0].getMedia().record();
+          peers[0].getMedia().record("video");
       }
     }, false);
 
@@ -285,9 +305,92 @@
       e.preventDefault();
       var peers = app.getAllPeer();
       if(peers.length){
-          peers[0].getMedia().recordStop(function(){
-            
+          peers[0].getMedia().recordStop(function(blob){
+            recordRemoteVideo = blob
           });
+      }
+    }, false);
+
+    saveRemoteVideoRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      if(recordRemoteVideo){
+        PlayRTC.utils.fileDownload(recordRemoteVideo, "recordRemoteVideo.webm");
+      }
+    }, false);
+
+    startRemoteVoiceRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      var peers = app.getAllPeer();
+      if(peers.length){
+          peers[0].getMedia().record("audio");
+      }
+    }, false);
+
+    stopRemoteVoiceRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      var peers = app.getAllPeer();
+      if(peers.length){
+          peers[0].getMedia().recordStop(function(){
+            recordRemoteVoice = blob
+          });
+      }
+    }, false);
+
+    saveRemoteVoiceRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      if(recordRemoteVoice){
+        PlayRTC.utils.fileDownload(recordRemoteVoice, "recordRemoteVoice.wav");
+      }
+    }, false);
+
+    startLocalVideoRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      var media = app.getMedia();
+      if(media){
+          media.record("video");
+      }
+    }, false);
+
+    stopLocalVideoRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      var media = app.getMedia();
+      if(media){
+          media.recordStop(function(blob){
+            recordLocalVideo = blob;
+          });
+      }
+    }, false);
+
+    saveLocalVideoRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      if(recordLocalVideo){
+          PlayRTC.utils.fileDownload(recordLocalVideo, "recordLocalVideo.webm");
+      }
+    }, false);
+
+
+    startLocalVoiceRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      var media = app.getMedia();
+      if(media){
+          media.record("audio");
+      }
+    }, false);
+
+    stopLocalVoiceRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      var media = app.getMedia();
+      if(media){
+          media.recordStop(function(blob){
+            recordLocalVoice = blob;
+          });
+      }
+    }, false);
+
+    saveLocalVoiceRecord.addEventListener('click', function(e) {
+      e.preventDefault();
+      if(recordLocalVoice){
+          PlayRTC.utils.fileDownload(recordLocalVoice, "recordLocalVoice.wav");
       }
     }, false);
   </script>
