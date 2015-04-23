@@ -16,10 +16,10 @@ PlayRTC의 가장 기본적인 기능인 사용자와 사용자를 연결하고 
 - [P2P Call](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basis/p2p-call.html)
   - 통화시 상대방의 수락을 기다리기
 
-### 채널
+### PlayRTC 서버 제공 채널 서비스
 PlayRTC 서비스가 제공하는 채널 기능 사용
 
-- [Channel](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/channel/channel-list.html)
+- [Channel](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/playrtc-channel-service/channel-list.html)
   - 채널 목록을 가져와 표출하기
 
 ### 데이터 채널
