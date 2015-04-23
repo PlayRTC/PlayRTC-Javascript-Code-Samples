@@ -12,7 +12,9 @@ PlayRTC의 가장 기본적인 기능인 사용자와 사용자를 연결하고 
 - [Local](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/local.html)
   - PlayRTC를 통해 기기의 영상, 음성 가져오기
 - [P2P](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/p2p.html)
-  - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 영상, 음성 통화 하기
+  - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 Video 태그를 사용하여 영상, 음성 통화 하기
+- [P2P](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/p2p-audio.html)
+  - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 Audio 태그를 사용하여 영상, 음성 통화 하기
 - [P2P Call](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/p2p-call.html)
   - 통화시 상대방의 수락을 기다리기
 
