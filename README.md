@@ -9,11 +9,11 @@ PlayRTC의 자바스크립트 SDK 코드 샘플
 ### 기본 기능
 PlayRTC의 가장 기본적인 기능인 사용자와 사용자를 연결하고 영상, 음성 통화를 수행
 
-- [Local](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basis/local.html)
+- [Local](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/local.html)
   - PlayRTC를 통해 기기의 영상, 음성 가져오기
-- [P2P](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basis/p2p.html)
+- [P2P](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/p2p.html)
   - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 영상, 음성 통화 하기
-- [P2P Call](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basis/p2p-call.html)
+- [P2P Call](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/p2p-call.html)
   - 통화시 상대방의 수락을 기다리기
 
 ### PlayRTC 서버 제공 채널 서비스
