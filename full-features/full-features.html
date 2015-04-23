@@ -299,7 +299,7 @@
           html = "";
 
         for (; i<len; i++) {
-          html = html + '<a href="#" class="list-group-item">' + chls[i].channelId +
+          html = html + '<a href="#" class="list-group-item" data-channelid="' + chls[i].channelId +'">' + chls[i].channelId +
               '<span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span></a>';
         };
         channelList.innerHTML = html;
@@ -314,7 +314,7 @@
 
     channelList.addEventListener('click', function(e) {
       e.preventDefault();
-      var channelId = e.target.innerText;
+      var channelId = e.target.dataset.channelid;
       app.connectChannel(channelId);
     }, false);
 
@@ -365,7 +365,7 @@
       e.preventDefault();
       var peers = app.getAllPeer();
       if(peers.length){
-          peers[0].getMedia().recordStop(function(){
+          peers[0].getMedia().recordStop(function(blob){
             recordRemoteVoice = blob
           });
       }
