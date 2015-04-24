@@ -152,6 +152,10 @@
       }
     });
 
+    app.on('error', function(state) {
+      alert("error!!");
+    });
+
     function getChannelList(){
       app.getChannelList(function(result){
         var chls = result.channels,
