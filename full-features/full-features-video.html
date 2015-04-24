@@ -127,6 +127,10 @@
       remoteVideoTarget: "remoteVideo"
     });
 
+    app.on("addLocalStream", function(){
+      start = new Date();
+    });
+
     app.on('connectChannel', function(channelId) {
       createChannelId.value = channelId;
       getChannelList();
@@ -183,7 +187,6 @@
       if(!channelId){
         return;
       }
-      start = new Date();
       app.connectChannel(channelId);
     }, false);
 
