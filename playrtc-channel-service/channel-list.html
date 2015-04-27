@@ -36,11 +36,6 @@
         <h2 class="h3">Channel</h2>
         <h3 class="h4">채널 목록</h3>
         <ul class="list-group">
-          <li class="list-group-item">Channel 1</li>
-          <li class="list-group-item">Channel 2</li>
-          <li class="list-group-item">Channel 3</li>
-          <li class="list-group-item">Channel 4</li>
-          <li class="list-group-item">Channel 5</li>
         </ul>
         <button class="btn btn-default" id="refreshChannel">
           <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
@@ -96,6 +91,11 @@
 
     var refreshChannelButton = document.querySelector('#refreshChannel');
     var getChannelList;
+    var app;
+
+    app = new PlayRTC({
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+    });
 
     getChannelList = function () {
       app.getChannelList(function (result){
