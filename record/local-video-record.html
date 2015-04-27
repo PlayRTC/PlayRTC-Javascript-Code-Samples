@@ -66,8 +66,8 @@
   <script>
     'use strict';
 
-    var createChnnelButton = document.querySelector('#createChannel');
-    var createChnnelIdInput = document.querySelector('#createChannelId');
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var startRecordButton = document.querySelector('#startRecord');
     var stopRecordButton = document.querySelector('#stopRecord');
     var saveRecordButton = document.querySelector('#saveRecord');
@@ -83,7 +83,7 @@
       createChannelIdInput.value = channelId;
     });
 
-    createChnnelButton.addEventListener('click', function (event) {
+    createChannelButton.addEventListener('click', function (event) {
       event.preventDefault();
       app.createChannel();
     }, false);

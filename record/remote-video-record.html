@@ -138,14 +138,16 @@
       appCallee.connectChannel(channelId);
     }, false);
 
-    peers = appCallee.getAllPeer();
-
     startRecordButton.addEventListener('click', function (event) {
-    	peers[0].getMedia().record('video');
+      var peers = appCallee.getAllPeer();
+
+      peers[0].getMedia().record('video');
   	}, false);
 
     stopRecordButton.addEventListener('click', function (event) {
-    	peers[0].getMedia().recordStop(function (blob) {
+      var peers = appCallee.getAllPeer();
+
+      peers[0].getMedia().recordStop(function (blob) {
     		video = blob;
     	});
   	}, false);

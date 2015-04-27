@@ -243,7 +243,6 @@
     var recordLocalVideo;
     var recordLocalVoice;
     var app;
-    var peers;
 
     getChannelList = function () {
       app.getChannelList(function(result) {
@@ -339,6 +338,8 @@
     }, false);
 
     startRemoteVideoRecordButton.addEventListener('click', function (event) {
+      var peers = appCallee.getAllPeer();
+
       event.preventDefault();
       if (peers.length) {
         peers[0].getMedia().record('video');
@@ -346,6 +347,8 @@
     }, false);
 
     stopRemoteVideoRecordButton.addEventListener('click', function (event) {
+      var peers = appCallee.getAllPeer();
+
       event.preventDefault();
       if (peers.length) {
         peers[0].getMedia().recordStop(function (blob) {
@@ -362,6 +365,8 @@
     }, false);
 
     startRemoteVoiceRecordButton.addEventListener('click', function (event) {
+      var peers = appCallee.getAllPeer();
+
       event.preventDefault();
       if (peers.length) {
         peers[0].getMedia().record('audio');
@@ -369,6 +374,8 @@
     }, false);
 
     stopRemoteVoiceRecordButton.addEventListener('click', function (event) {
+      var peers = appCallee.getAllPeer();
+
       event.preventDefault();
       if (peers.length) {
         peers[0].getMedia().recordStop(function (blob) {

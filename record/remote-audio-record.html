@@ -121,7 +121,6 @@
     var saveRecordButton = document.querySelector('#saveRecord');
     var audio;
     var appCallee;
-    var peers;
 
     appCallee = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
@@ -139,14 +138,16 @@
       appCallee.connectChannel(channelId);
     }, false);
 
-    peers = appCallee.getAllPeer();
-
     startRecordButton.addEventListener('click', function (event) {
-    	peers[0].getMedia().record('audio');
+    	var peers = appCallee.getAllPeer();
+
+      peers[0].getMedia().record('audio');
   	}, false);
 
     stopRecordButton.addEventListener('click', function (event) {
-    	peers[0].getMedia().recordStop(function (blob) {
+      var peers = appCallee.getAllPeer();
+
+      peers[0].getMedia().recordStop(function (blob) {
     		audio = blob;
     	});
   	}, false);
