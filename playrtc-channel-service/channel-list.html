@@ -32,17 +32,7 @@
         <h1 class="page-header">채널 목록을 불러오고 확인 하기 - PlayRTC Test</h1>
       </div>
 
-      <div class="col-md-2">
-        <h2 class="h3">Channel</h2>
-        <h3 class="h4">채널 목록</h3>
-        <ul class="list-group">
-        </ul>
-        <button class="btn btn-default" id="refreshChannel">
-          <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
-        </button>
-      </div>
-
-      <div class="col-md-5">
+      <div class="col-md-6">
         <h2 class="h3">Caller</h2>
         <h3 class="h4">채널 생성 및 입장</h3>
         <form class="form-inline">
@@ -60,24 +50,25 @@
 
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-6">
         <h2 class="h3">Callee</h2>
-        <h3 class="h4">채널 입장</h3>
-        <form class="form-inline">
-          <div class="form-group">
-            <label class="sr-only" for="connectChannelId">Channel Id</label>
-            <input class="form-control" type="text" id="connectChannelId" placeholder="ChannelId를 입력하세요." value="">
+        <div class="row">
+
+          <div class="col-md-4">
+            <h3 class="h4">채널 목록</h3>
+            <ul class="list-group">
+            </ul>
+            <button class="btn btn-default" id="refreshChannel">
+              <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
+            </button>
           </div>
-          <button class="btn btn-default" id="connectChannel">
-            <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> 채널 입장
-          </button>
-        </form>
 
-        <video class="remote-video center-block" id="calleeRemoteVideo"></video>
-        <video class="local-video pull-right" id="calleeLocalVideo"></video>
-
+          <div class="col-md-8">
+            <video class="remote-video center-block" id="calleeRemoteVideo"></video>
+            <video class="local-video pull-right" id="calleeLocalVideo"></video>
+          </div>
+        </div>
       </div>
-
     </div>
   </div>
 
@@ -85,40 +76,6 @@
   <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
 
   <script src="http://www.playrtc.com/sdk/js/playrtc.js"></script>
-  <script>
-    'use strict';
-
-    var refreshChannelButton = document.querySelector('#refreshChannel');
-    var getChannelList;
-    var app;
-
-    getChannelList = function () {
-      app.getChannelList(function (result){
-        var chls = result.channels,
-          len = chls.length,
-          i = 0,
-          html = "";
-
-        for (; i<len; i++) {
-          html = html + '<a href="#" class="list-group-item" data-channelid="' + chls[i].channelId +'">' + chls[i].channelId +
-              '<span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span></a>';
-        };
-        channelList.innerHTML = html;
-      });
-    }
-
-    app = new PlayRTC({
-      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-    });
-
-    refreshChannelButton.addEventListener('click', function (event) {
-      event.preventDefault();
-      getChannelList();
-    }, false);
-
-    getChannelList();
-
-  </script>
   <script>
     'use strict';
 
@@ -132,11 +89,11 @@
       remoteVideoTarget: 'callerRemoteVideo'
     });
 
-    appCaller.on('connectChannel', function (channelId) {
+    appCaller.on('connectChannel', function(channelId) {
       createChannelIdInput.value = channelId;
     });
 
-    createChannelButton.addEventListener('click', function (event) {
+    createChannelButton.addEventListener('click', function(event) {
       event.preventDefault();
       appCaller.createChannel();
     }, false);
@@ -146,7 +103,24 @@
 
     var connectChannelIdInput = document.querySelector('#connectChannelId');
     var connectChannelButton = document.querySelector('#connectChannel');
+    var refreshChannelButton = document.querySelector('#refreshChannel');
     var appCallee;
+    var getChannelList;
+
+    getChannelList = function () {
+      appCallee.getChannelList(function (result){
+        var chls = result.channels,
+          len = chls.length,
+          i = 0,
+          html = "";
+
+        for (; i<len; i++) {
+          html = html + '<a href="#" class="list-group-item" data-channelid="' + chls[i].channelId +'">' + chls[i].channelId +
+              '<span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span></a>';
+        };
+        channelList.innerHTML = html;
+      });
+    };
 
     appCallee = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
@@ -154,15 +128,22 @@
       remoteVideoTarget: 'calleeRemoteVideo'
     });
 
-    connectChannelButton.addEventListener('click', function (event) {
+    connectChannelButton.addEventListener('click', function(event) {
       var channelId = connectChannelIdInput.value;
-
       event.preventDefault();
       if (!channelId) {
         return;
-      }
+      };
       appCallee.connectChannel(channelId);
     }, false);
+
+    refreshChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      getChannelList();
+    }, false);
+
+    getChannelList();
+
   </script>
 </body>
 
