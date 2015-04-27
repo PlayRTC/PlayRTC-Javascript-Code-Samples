@@ -51,7 +51,32 @@
     </div>
 
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-3">
+
+        <h2 class="h3">Profile</h2>
+        <h3 class="h4">사용자 설정</h3>
+        <form>
+          <label class="sr-only" for="userName">User ID</label>
+          <div class="input-group input-group-sm">
+            <input class="form-control" type="text" id="userName" placeholder="사용자 ID를 설정하세요." value="">
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="changeName">
+                확인
+              </button>
+            </span>
+          </div>
+        </form>
+        <form>
+          <label class="sr-only" for="userId">User Name</label>
+          <div class="input-group input-group-sm">
+            <input class="form-control" type="text" id="userId" placeholder="대화명을 설정하세요." value="">
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="changeId">
+                확인
+              </button>
+            </span>
+          </div>
+        </form>
 
         <h2 class="h3">Channel</h2>
         <h3 class="h4">채널 생성 및 입장</h3>
@@ -79,7 +104,7 @@
         </button>
       </div>
 
-      <div class="col-md-7">
+      <div class="col-md-6">
         <h2 class="h3">Remote</h2>
         <div class="well">
           <video class="remote-video center-block" id="remoteVideo"></video>
@@ -162,18 +187,6 @@
           </div>
 
         </div>
-
-        <form>
-          <label class="sr-only" for="userName">User Name</label>
-          <div class="input-group input-group-sm">
-            <input class="form-control" type="text" id="userName" placeholder="대화명을 설정하세요." value="">
-            <span class="input-group-btn">
-              <button class="btn btn-default" id="changeName">
-                확인
-              </button>
-            </span>
-          </div>
-        </form>
 
         <div class="well chat-timeline" id="timeline" style="overflow: auto;">
         </div>
