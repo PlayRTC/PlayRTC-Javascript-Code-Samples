@@ -102,7 +102,6 @@
     'use strict';
 
     var connectChannelIdInput = document.querySelector('#connectChannelId');
-    var connectChannelButton = document.querySelector('#connectChannel');
     var refreshChannelButton = document.querySelector('#refreshChannel');
     var appCallee;
     var getChannelList;
@@ -127,15 +126,6 @@
       localVideoTarget: 'calleeLocalVideo',
       remoteVideoTarget: 'calleeRemoteVideo'
     });
-
-    connectChannelButton.addEventListener('click', function(event) {
-      var channelId = connectChannelIdInput.value;
-      event.preventDefault();
-      if (!channelId) {
-        return;
-      };
-      appCallee.connectChannel(channelId);
-    }, false);
 
     refreshChannelButton.addEventListener('click', function(event) {
       event.preventDefault();
