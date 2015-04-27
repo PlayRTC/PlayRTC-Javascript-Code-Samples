@@ -62,7 +62,6 @@
 
       <div class="col-md-5">
         <h2 class="h3">Callee</h2>
-
         <h3 class="h4">채널 입장</h3>
         <form class="form-inline">
           <div class="form-group">
@@ -93,10 +92,6 @@
     var getChannelList;
     var app;
 
-    app = new PlayRTC({
-      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-    });
-
     getChannelList = function () {
       app.getChannelList(function (result){
         var chls = result.channels,
@@ -111,6 +106,10 @@
         channelList.innerHTML = html;
       });
     }
+
+    app = new PlayRTC({
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+    });
 
     refreshChannelButton.addEventListener('click', function (event) {
       event.preventDefault();
