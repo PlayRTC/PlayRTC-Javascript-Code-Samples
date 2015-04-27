@@ -75,23 +75,23 @@
     'use strict';
 
     var createChannelButton = document.querySelector('#createChannel');
-    var createChannelId = document.querySelector('#createChannelId');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var videoResolution = document.querySelector('#videoResolution');
     var vidoeBitrate = document.querySelector('#vidoeBitrate');
+    var localVideo = document.querySelector('#localVideo')
     var app;
 
-    createChannelButton.addEventListener('click', function(e){
-		  e.preventDefault();
-
-		  var val = videoResolution.value.split("*");
-		  var width = val[0];
-		  var height = val[1];
-
+    createChannelButton.addEventListener('click', function(event){
+		  var resolution = videoResolution.value.split('*');
+		  var width = resolution[0];
+		  var height = resolution[1];
 		  var bitrate = vidoeBitrate.value;
 
+      event.preventDefault();
+
 		  app = new PlayRTC({
-		      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-		      localVideoTarget: "localVideo",
+		      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+		      localVideoTarget: 'localVideo',
 		      userMedia: {
 		    	  audio: true,
 		    	  video: {
@@ -104,12 +104,12 @@
 		      }
 		    });
 
-		  var el = document.getElementById("localVideo")
-		  el.setAttribute("width", width);
-		  el.setAttribute("height", height);
-		  app.on('connectChannel', function(channelId) {
-		      createChannelId.value = channelId;
-		    });
+      localVideo.setAttribute('width', width);
+      localVideo.setAttribute('height', height);
+
+		  app.on('connectChannel', function (channelId) {
+		    createChannelIdInput.value = channelId;
+		  });
 
 		  app.createChannel();
     }, false);

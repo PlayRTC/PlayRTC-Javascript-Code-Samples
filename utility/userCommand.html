@@ -97,62 +97,63 @@
     'use strict';
 
     var createChannelButton = document.querySelector('#createChannel');
-    var createChannelId = document.querySelector('#createChannelId');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var sendButton = document.querySelector('#send');
-    var sendMessage = document.querySelector('#sendMessage');
+    var sendMessageInput = document.querySelector('#sendMessage');
     var appCaller;
 
     appCaller = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "callerLocalVideo",
-      remoteVideoTarget: "callerRemoteVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'callerLocalVideo',
+      remoteVideoTarget: 'callerRemoteVideo'
     });
 
-    appCaller.on('connectChannel', function(channelId) {
-      createChannelId.value = channelId;
+    appCaller.on('connectChannel', function (channelId) {
+      createChannelIdInput.value = channelId;
     });
 
-    createChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    createChannelButton.addEventListener('click', function (event) {
+      event.preventDefault();
       appCaller.createChannel();
     }, false);
 
-    sendButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    sendButton.addEventListener('click', function (event) {
+      var data = sendMessage.value;
 
-      var val = sendMessage.value;
-      if (!val) {
+      event.preventDefault();
+      if (!data) {
         return false;
       }
-      appCaller.userCommand(val);
-      sendMessage.value = "";
+      appCaller.userCommand(data);
+      sendMessageInput.value = "";
       return false;
     }, false);
   </script>
   <script>
     'use strict';
 
-    var connectChannelId = document.querySelector('#connectChannelId');
+    var connectChannelIdInput = document.querySelector('#connectChannelId');
     var connectChannelButton = document.querySelector('#connectChannel');
-    var recevedMessage = document.querySelector('#recevedMessage');
+    var recevedMessageInput = document.querySelector('#recevedMessage');
     var appCallee;
 
     appCallee = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "calleeLocalVideo",
-      remoteVideoTarget: "calleeRemoteVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'calleeLocalVideo',
+      remoteVideoTarget: 'calleeRemoteVideo'
     });
 
-    appCallee.on("userCommand", function(pid, uid, data){
-		recevedMessage.value = data;
+    appCallee.on('userCommand', function (pid, uid, data) {
+		  recevedMessageInput.value = data;
     });
 
-    connectChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      var channelId = connectChannelId.value;
+    connectChannelButton.addEventListener('click', function (event) {
+      var channelId = connectChannelIdInput.value;
+
+      event.preventDefault();
       if (!channelId) {
-        return
-      };
+        return;
+      }
       appCallee.connectChannel(channelId);
     }, false);
   </script>
