@@ -80,22 +80,22 @@
     'use strict';
 
     var createChannelButton = document.querySelector('#createChannel');
-    var createChannelId = document.querySelector('#createChannelId');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var appCaller;
 
     appCaller = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "callerLocalVideo",
-      remoteVideoTarget: "callerRemoteVideo",
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'callerLocalVideo',
+      remoteVideoTarget: 'callerRemoteVideo',
       ring: true
     });
 
     appCaller.on('connectChannel', function(channelId) {
-      createChannelId.value = channelId;
+      createChannelIdInput.value = channelId;
     });
 
     appCaller.on('ring', function(pid, uid) {
-      if (window.confirm("수락하시겠습니까?")) {
+      if (window.confirm('수락하시겠습니까?')) {
         appCaller.accept(pid);
       } else {
         appCaller.reject(pid);
@@ -103,33 +103,33 @@
     });
 
     appCaller.on('accept', function() {
-      console.log("상대방이 수락하였습니다.");
+      alert('상대방이 수락하였습니다.');
     });
 
     appCaller.on('reject', function() {
-      console.log('상대방이 거절하였습니다.');
+      alert('상대방이 거절하였습니다.');
     });
 
-    createChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    createChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
       appCaller.createChannel();
     }, false);
   </script>
   <script>
     'use strict';
 
-    var connectChannelId = document.querySelector('#connectChannelId');
+    var connectChannelIdInput = document.querySelector('#connectChannelId');
     var connectChannelButton = document.querySelector('#connectChannel');
     var appCallee;
 
     appCallee = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "calleeLocalVideo",
-      remoteVideoTarget: "calleeRemoteVideo",
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'calleeLocalVideo',
+      remoteVideoTarget: 'calleeRemoteVideo',
       ring: true
     });
 
-    appCallee.on('ring', function(pid, uid) {
+    appCallee.on('ring', function (pid, uid) {
       if (window.confirm('수락하시겠습니까?')) {
         appCallee.accept(pid);
       } else {
@@ -137,10 +137,13 @@
       }
     });
 
-    connectChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      var channelId = connectChannelId.value;
-      if (!channelId) return;
+    connectChannelButton.addEventListener('click', function (event) {
+      var channelId = connectChannelIdInput.value;
+
+      event.preventDefault();
+      if (!channelId) {
+        return;
+      }
       appCallee.connectChannel(channelId);
     }, false);
   </script>

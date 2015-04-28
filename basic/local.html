@@ -50,21 +50,21 @@
   <script>
     'use strict';
 
-    var createChnnelButton = document.querySelector('#createChannel');
-    var createChnnelId = document.querySelector('#createChannelId');
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var app;
 
     app = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "localVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'localVideo'
     });
 
-    app.on('connectChannel', function(channelId) {
-      createChannelId.value = channelId;
+    app.on('connectChannel', function (channelId) {
+      createChannelIdInput.value = channelId;
     });
 
-    createChnnelButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    createChannelButton.addEventListener('click', function (event) {
+      event.preventDefault();
       app.createChannel();
     }, false);
   </script>

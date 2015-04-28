@@ -66,8 +66,8 @@
   <script>
     'use strict';
 
-    var createChnnelButton = document.querySelector('#createChannel');
-    var createChnnelId = document.querySelector('#createChannelId');
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var startRecordButton = document.querySelector('#startRecord');
     var stopRecordButton = document.querySelector('#stopRecord');
     var saveRecordButton = document.querySelector('#saveRecord');
@@ -75,32 +75,32 @@
     var app;
 
     app = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "localVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'localVideo'
     });
 
-    app.on('connectChannel', function(channelId) {
-      createChannelId.value = channelId;
+    app.on('connectChannel', function (channelId) {
+      createChannelIdInput.value = channelId;
     });
 
-    createChnnelButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    createChannelButton.addEventListener('click', function (event) {
+      event.preventDefault();
       app.createChannel();
     }, false);
 
-    startRecordButton.addEventListener('click', function(e){
+    startRecordButton.addEventListener('click', function (event) {
     	app.getMedia().record('video');
   	}, false);
 
-    stopRecordButton.addEventListener('click', function(e){
-    	app.getMedia().recordStop(function(blob){
+    stopRecordButton.addEventListener('click', function (event) {
+    	app.getMedia().recordStop(function (blob) {
     		video = blob;
     	});
   	}, false);
 
-    saveRecordButton.addEventListener('click', function(e){
-    	if(video){
-    		PlayRTC.utils.fileDownload(video, 'localVideo.avi');
+    saveRecordButton.addEventListener('click', function (event) {
+    	if (video) {
+    		PlayRTC.utils.fileDownload(video, 'local-video.webm');
     	}
   	}, false);
   </script>

@@ -70,7 +70,7 @@
         <div class="text-center">
           <div class="btn-group" role="group" aria-label="...">
             <button class="btn btn-default" id="startRecord">
-              <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹화
+              <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹음
             </button>
             <button class="btn btn-default" id="stopRecord">
               <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
@@ -93,28 +93,28 @@
     'use strict';
 
     var createChannelButton = document.querySelector('#createChannel');
-    var createChannelId = document.querySelector('#createChannelId');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var appCaller;
 
     appCaller = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "callerLocalVideo",
-      remoteVideoTarget: "callerRemoteVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'callerLocalVideo',
+      remoteVideoTarget: 'callerRemoteVideo'
     });
 
-    appCaller.on('connectChannel', function(channelId) {
-      createChannelId.value = channelId;
+    appCaller.on('connectChannel', function (channelId) {
+      createChannelIdInput.value = channelId;
     });
 
-    createChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    createChannelButton.addEventListener('click', function (event) {
+      event.preventDefault();
       appCaller.createChannel();
     }, false);
   </script>
   <script>
     'use strict';
 
-    var connectChannelId = document.querySelector('#connectChannelId');
+    var connectChannelIdInput = document.querySelector('#connectChannelId');
     var connectChannelButton = document.querySelector('#connectChannel');
     var startRecordButton = document.querySelector('#startRecord');
     var stopRecordButton = document.querySelector('#stopRecord');
@@ -123,34 +123,39 @@
     var appCallee;
 
     appCallee = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "calleeLocalVideo",
-      remoteVideoTarget: "calleeRemoteVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'calleeLocalVideo',
+      remoteVideoTarget: 'calleeRemoteVideo'
     });
 
-    connectChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      var channelId = connectChannelId.value;
-      if (!channelId) return;
+    connectChannelButton.addEventListener('click', function (event) {
+      var channelId = connectChannelIdInput.value;
+
+      event.preventDefault();
+      if (!channelId) {
+        return;
+      }
       appCallee.connectChannel(channelId);
     }, false);
 
-    startRecordButton.addEventListener('click', function(e){
+    startRecordButton.addEventListener('click', function (event) {
     	var peers = appCallee.getAllPeer();
-    	peers[0].getMedia().record("audio");
+
+      peers[0].getMedia().record('audio');
   	}, false);
 
-    stopRecordButton.addEventListener('click', function(e){
-    	var peers = appCallee.getAllPeer();
-    	peers[0].getMedia().recordStop(function(blob){
+    stopRecordButton.addEventListener('click', function (event) {
+      var peers = appCallee.getAllPeer();
+
+      peers[0].getMedia().recordStop(function (blob) {
     		audio = blob;
     	});
   	}, false);
 
-    saveRecordButton.addEventListener('click', function(e){
-    	if(audio){
-    		PlayRTC.utils.fileDownload(audio, 'remoteAudio.wav');
-    	}
+    saveRecordButton.addEventListener('click', function (event) {
+    	if (audio) {
+    		PlayRTC.utils.fileDownload(audio, 'remote-audio.wav');
+    	};
   	}, false);
   </script>
 </body>

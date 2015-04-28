@@ -89,42 +89,40 @@
   <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
   <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
 
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
   <script src="http://www.playrtc.com/sdk/js/playrtc.js"></script>
   <script>
     'use strict';
 
     var createChannelButton = document.querySelector('#createChannel');
-    var createChannelId = document.querySelector('#createChannelId');
+    var createChannelIdInput = document.querySelector('#createChannelId');
     var sendButton = document.querySelector('#send');
     var selectFile = document.querySelector('#seclectFile');
     var file = null;
     var appCaller;
 
     appCaller = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "callerLocalVideo",
-      remoteVideoTarget: "callerRemoteVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'callerLocalVideo',
+      remoteVideoTarget: 'callerRemoteVideo'
     });
 
-    appCaller.on('connectChannel', function(channelId) {
-      createChannelId.value = channelId;
+    appCaller.on('connectChannel', function (channelId) {
+      createChannelIdInput.value = channelId;
     });
 
-    createChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    createChannelButton.addEventListener('click', function (event) {
+      event.preventDefault();
       appCaller.createChannel();
     }, false);
 
-    sendButton.addEventListener('click', function(e) {
-      e.preventDefault();
+    sendButton.addEventListener('click', function (event) {
+      var data = selectFile.files[0];
 
-      var val = selectFile.files[0];
-      if (!val) {
+      event.preventDefault();
+      if (!data) {
         return false;
-      }
-      appCaller.dataSend(val);
+      };
+      appCaller.dataSend(data);
       selectFile.value = '';
       return false;
     }, false);
@@ -132,41 +130,42 @@
   <script>
     'use strict';
 
-    var connectChannelId = document.querySelector('#connectChannelId');
+    var connectChannelIdInput = document.querySelector('#connectChannelId');
     var connectChannelButton = document.querySelector('#connectChannel');
     var receiveButton = document.querySelector('#receive');
     var appCallee;
 
     appCallee = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "calleeLocalVideo",
-      remoteVideoTarget: "calleeRemoteVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'calleeLocalVideo',
+      remoteVideoTarget: 'calleeRemoteVideo'
     });
 
-    appCallee.on('addDataStream', function(pid, uid, dataChannel) {
-      dataChannel.on('message', function(message) {
+    appCallee.on('addDataStream', function (pid, uid, dataChannel) {
+      dataChannel.on('message', function (message) {
         if (message.type === 'file') {
           alert('파일을 받았습니다. 저장해주세요.');
           file = message;
         }
       });
-      dataChannel.on('error', function(e) {
+
+      dataChannel.on('error', function (event) {
         alert('에러가 발생했습니다.');
       });
     });
 
-    connectChannelButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      var channelId = connectChannelId.value;
+    connectChannelButton.addEventListener('click', function (event) {
+      var channelId = connectChannelIdInput.value;
+
+      event.preventDefault();
       if (!channelId) {
-        return
-      };
+        return;
+      }
       appCallee.connectChannel(channelId);
     }, false);
 
-    receiveButton.addEventListener('click', function(e) {
-      e.preventDefault();
-
+    receiveButton.addEventListener('click', function (event) {
+      event.preventDefault();
       if (file) {
         PlayRTC.utils.fileDownload(file.blob, file.fileName);
       }
