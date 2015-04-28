@@ -12,8 +12,15 @@
     }
 
     .remote-video {
-      width: 640px;
-      height: 480px;
+      width: 320px;
+      height: 240px;
+    }
+
+    @media (min-width: 992px) {
+      .remote-video {
+        width: 640px;
+        height: 480px;
+      }
     }
 
     .chat-timeline {
@@ -75,7 +82,7 @@
             <input class="form-control" type="text" id="createChannelId" value="" readonly>
             <label class="sr-only" for="createChannelId">Channel Id</label>
           </div>
-          <button class="btn btn-default btn-block" id="createChannel">
+          <button class="btn btn-default btn-sm btn-block" id="createChannel">
             <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> 채널 생성
           </button>
         </form>
