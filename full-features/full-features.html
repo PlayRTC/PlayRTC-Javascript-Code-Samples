@@ -56,25 +56,9 @@
         <h2 class="h3">Profile/Config</h2>
         <h3 class="h4">사용자 설정</h3>
         <form>
-          <label class="sr-only" for="userName">User ID</label>
+          <label class="sr-only" for="userId">User ID</label>
           <div class="input-group input-group-sm">
-            <input class="form-control" type="text" id="userName" placeholder="사용자 ID를 설정하세요." value="">
-            <span class="input-group-btn">
-              <button class="btn btn-default" id="changeName">
-                확인
-              </button>
-            </span>
-          </div>
-        </form>
-        <form>
-          <label class="sr-only" for="userId">User Name</label>
-          <div class="input-group input-group-sm">
-            <input class="form-control" type="text" id="userId" placeholder="대화명을 설정하세요." value="">
-            <span class="input-group-btn">
-              <button class="btn btn-default" id="changeId">
-                확인
-              </button>
-            </span>
+            <input class="form-control" type="text" id="userId" placeholder="사용자 ID를 설정하세요." value="">
           </div>
         </form>
 
@@ -255,6 +239,7 @@
     var recordRemoteVoice;
     var recordLocalVideo;
     var recordLocalVoice;
+    var uId;
     var app;
 
     getChannelList = function () {
@@ -299,7 +284,7 @@
         if (message.type === 'text') {
           var el = document.getElementById('timeline');
 
-          el.innerHTML = el.innerHTML + '<p class="local">' + message.data + '</p>';
+          el.innerHTML = el.innerHTML + '<p class="local">['+ uid +'] ' + message.data + '</p>';
         } else {
           var el = document.querySelector('#sendFileToRemoteBar');
 
@@ -332,15 +317,26 @@
     }, false);
 
     channelList.addEventListener('click', function (event) {
-      var channelId = event.target.dataset.channelid;
-
       event.preventDefault();
-      app.connectChannel(channelId);
+      
+      var channelId = event.target.dataset.channelid;
+      uId = document.getElementById("userId").value;
+      app.connectChannel(channelId, {
+    	  peer: {
+    		uid: uId
+    	  }
+      });
     }, false);
 
     createChannelButton.addEventListener('click', function (event) {
       event.preventDefault();
-      app.createChannel();
+      
+      uId = document.getElementById("userId").value;
+      app.createChannel({
+    	  peer: {
+    		uid: uId
+    	  }
+      });
     }, false);
 
     quitChannelButton.addEventListener('click', function (event) {
@@ -464,7 +460,7 @@
         var el = document.querySelector('#timeline');
 
         app.dataSend(msg);
-        el.innerHTML = el.innerHTML + '<p class="remote">' + msg + '</p>';
+        el.innerHTML = el.innerHTML + '<p class="remote">['+ uId +'] ' + msg + '</p>';
       }
       document.getElementById('sendMessage').value = "";
     }, false);

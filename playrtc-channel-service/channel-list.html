@@ -56,7 +56,7 @@
 
           <div class="col-md-4">
             <h3 class="h4">채널 목록</h3>
-            <ul class="list-group">
+            <ul class="list-group" id="channelList">
             </ul>
             <button class="btn btn-default" id="refreshChannel">
               <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
@@ -81,6 +81,7 @@
 
     var createChannelButton = document.querySelector('#createChannel');
     var createChannelIdInput = document.querySelector('#createChannelId');
+    var channelList = document.querySelector('#channelList');
     var appCaller;
 
     appCaller = new PlayRTC({
