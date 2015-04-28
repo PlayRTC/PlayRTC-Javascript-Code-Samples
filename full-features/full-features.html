@@ -62,10 +62,10 @@
         <h2 class="h3">Profile/Config</h2>
         <h3 class="h4">사용자 설정</h3>
         <form>
-          <label class="sr-only" for="userId">User ID</label>
-          <input class="form-control" type="text" id="userId" placeholder="사용자 ID를 설정하세요." value="">
-          <label class="sr-only" for="userName">User Name</label>
-          <input class="form-control" type="text" id="userName" placeholder="대화명을 설정하세요." value="">
+          <div class="form-group">
+            <label class="sr-only" for="userId">User ID</label>
+            <input class="form-control" type="text" id="userId" placeholder="사용자 ID를 설정하세요." value="">
+          </div>
         </form>
 
         <h2 class="h3">Channel</h2>
@@ -84,7 +84,6 @@
         <button class="btn btn-default btn-sm btn-block" id="quitChannel">
           <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 채널 나오기
         </button>
-
 
         <h3 class="h4">채널 목록</h3>
         <div class="list-group channel-list" id="channelList"></div>
@@ -253,9 +252,7 @@
     var recordedLocalVideoBlob;
     var recordedLocalVoiceBlob;
     var userIdInput = document.querySelector('#userId');
-    var userNameInput = document.querySelector('#userName');
     var userId;
-    var userName;
     var app;
 
     app = new PlayRTC({
@@ -362,7 +359,7 @@
 
       app.connectChannel(channelId, {
     	  peer: {
-          uid: userID
+          uid: userId
     	  }
       });
 
