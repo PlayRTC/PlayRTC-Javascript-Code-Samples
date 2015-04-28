@@ -21,6 +21,12 @@
       width: 320px;
       height: 240px;
     }
+    
+    @media (min-width: 992px) {
+      .channel-list {
+        font-size: 0.8em;
+      }
+    }
   </style>
 </head>
 
@@ -56,8 +62,7 @@
 
           <div class="col-md-4">
             <h3 class="h4">채널 목록</h3>
-            <ul class="list-group">
-            </ul>
+            <div class="list-group channel-list" id="channelList"></div>
             <button class="btn btn-default" id="refreshChannel">
               <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
             </button>
@@ -103,21 +108,34 @@
 
     var connectChannelIdInput = document.querySelector('#connectChannelId');
     var refreshChannelButton = document.querySelector('#refreshChannel');
+    var channelList = document.querySelector('#channelList');
     var appCallee;
     var getChannelList;
 
     getChannelList = function () {
-      appCallee.getChannelList(function (result){
-        var chls = result.channels,
-          len = chls.length,
-          i = 0,
-          html = "";
+      appCallee.getChannelList(function (result) {
+        var channels = result.channels;
+        var channelsLength = channels.length;
 
-        for (; i<len; i++) {
-          html = html + '<a href="#" class="list-group-item" data-channelid="' + chls[i].channelId +'">' + chls[i].channelId +
-              '<span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span></a>';
-        };
-        channelList.innerHTML = html;
+        while (channelList.hasChildNodes()) {
+          channelList.removeChild(channelList.firstChild);
+        }
+
+        for (var i = 0; i < channelsLength; i++) {
+          var channelListAnchor = document.createElement('a');
+          var linkIcon = document.createElement('span');
+
+          channelListAnchor.classList.add('list-group-item');
+          channelListAnchor.setAttribute('data-channelid',channels[i].channelId);
+          channelListAnchor.textContent = channels[i].channelId;
+
+          linkIcon.classList.add('glyphicon', 'glyphicon-menu-right', 'pull-right');
+          linkIcon.setAttribute('aria-hidden', 'true');
+
+          channelListAnchor.appendChild(linkIcon);
+
+          channelList.appendChild(channelListAnchor);
+        }
       });
     };
 

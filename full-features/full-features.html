@@ -29,6 +29,12 @@
     .chat-timeline .remote {
       color: red;
     }
+
+    @media (min-width: 992px) {
+      .channel-list {
+        font-size: 0.8em;
+      }
+    }
   </style>
 </head>
 
@@ -51,7 +57,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-2">
 
         <h2 class="h3">Profile/Config</h2>
         <h3 class="h4">사용자 설정</h3>
@@ -97,14 +103,14 @@
 
 
         <h3 class="h4">채널 목록</h3>
-        <div class="list-group" id="channelList"></div>
+        <div class="list-group channel-list" id="channelList"></div>
 
         <button class="btn btn-default btn-sm pull-right" id="refreshChannel">
           <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
         </button>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-7">
         <h2 class="h3">Remote</h2>
         <div class="well">
           <video class="remote-video center-block" id="remoteVideo"></video>
@@ -209,8 +215,8 @@
         <form class="form-inline">
           <div class="row">
             <div class="col-md-8">
-              <label class="sr-only" for="seclectFile">전송할 파일을 선택하세요</label>
-              <input type="file" id="seclectFile">
+              <label class="sr-only" for="selectFile">전송할 파일을 선택하세요</label>
+              <input type="file" id="selectFile">
             </div>
             <div class="col-md-4">
               <button class="btn btn-default btn-xs pull-right" id="sendFile">
@@ -249,34 +255,55 @@
     var startLocalVoiceRecordButton = document.querySelector('#startLocalVoiceRecord');
     var stopLocalVoiceRecordButton = document.querySelector('#stopLocalVoiceRecord');
     var saveLocalVoiceRecordButton = document.querySelector('#saveLocalVoiceRecord');
+    var chattingTimeline = document.querySelector('#timeline');
+    var sendMessageInput = document.querySelector('#sendMessage');
+    var selectFileInput = document.querySelector('#selectFile');
     var sendTextButton = document.querySelector('#sendText');
     var sendFileButton = document.querySelector('#sendFile');
-    var recordRemoteVideo;
-    var recordRemoteVoice;
-    var recordLocalVideo;
-    var recordLocalVoice;
+    var sendFileToRemoteBar = document.querySelector('#sendFileToRemoteBar');
+    var sendFileToRemoteBarWrapper = document.querySelector('#sendFileToRemoteBarWrapper');
+    var remoteVideo = document.querySelector('#remoteVideo');
+    var localVideo = document.querySelector('#localVideo');
+    var recordedRemoteVideoBlob;
+    var recordedRemoteVoiceBlob;
+    var recordedLocalVideoBlob;
+    var recordedLocalVoiceBlob;
     var app;
-
-    getChannelList = function () {
-      app.getChannelList(function(result) {
-        var chls = result.channels,
-          len = chls.length,
-          i = 0,
-          html = "";
-
-        for (; i < len; i++) {
-          html = html + '<a href="#" class="list-group-item" data-channelid="' + chls[i].channelId + '">' + chls[i].channelId +
-            '<span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span></a>';
-        };
-        channelList.innerHTML = html;
-      });
-    }
 
     app = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
       localVideoTarget: 'localVideo',
       remoteVideoTarget: 'remoteVideo'
     });
+
+    getChannelList = function () {
+      app.getChannelList(function (result) {
+        var channels = result.channels;
+        var channelsLength = channels.length;
+
+        while (channelList.hasChildNodes()) {
+          channelList.removeChild(channelList.firstChild);
+        }
+
+        for (var i = 0; i < channelsLength; i++) {
+          var channelListAnchor = document.createElement('a');
+          var linkIcon = document.createElement('span');
+
+          channelListAnchor.classList.add('list-group-item');
+          channelListAnchor.setAttribute('data-channelid', channels[i].channelId);
+          channelListAnchor.textContent = channels[i].channelId;
+
+          linkIcon.classList.add('glyphicon', 'glyphicon-menu-right', 'pull-right');
+          linkIcon.setAttribute('aria-hidden', 'true');
+
+          channelListAnchor.appendChild(linkIcon);
+
+          channelList.appendChild(channelListAnchor);
+        }
+      });
+    }
+
+    getChannelList();
 
     app.on('connectChannel', function (channelId) {
       createChannelIdInput.value = channelId;
@@ -285,46 +312,55 @@
 
     app.on('disconnectChannel', function (channelId) {
       createChannelIdInput.value = '';
+
+      while (chattingTimeline.hasChildNodes()) {
+        chattingTimeline.removeChild(chattingTimeline.firstChild);
+      }
+
       getChannelList();
     });
 
     app.on('otherDisconnectChannel', function (channelId) {
-      document.querySelector('#remoteVideo').src = '';
-      document.querySelector('#timeline').innerHTML = '';
+      remoteVideo.src = '';
+
+      while (chattingTimeline.hasChildNodes()) {
+        chattingTimeline.removeChild(chattingTimeline.firstChild);
+      }
+
       getChannelList();
     });
 
     app.on('addDataStream', function (pid, uid, dataChannel) {
       dataChannel.on('message', function (message) {
+        var chatParagraph;
+
         if (message.type === 'text') {
-          var el = document.getElementById('timeline');
+          chatParagraph = document.createElement('p');
+          chatParagraph.classList.add('local');
+          chatParagraph.textContent = message.data;
 
-          el.innerHTML = el.innerHTML + '<p class="local">' + message.data + '</p>';
-        } else {
-          var el = document.querySelector('#sendFileToRemoteBar');
-
+          chattingTimeline.appendChild(chatParagraph);
+        } else if (message.type === 'file') {
           PlayRTC.utils.fileDownload(message.blob, message.fileName);
-          el.style.width = '0px';
-        };
+          sendFileToRemoteBar.style.width = '0px';
+        }
       });
 
       dataChannel.on('progress', function (message) {
-        var width = document.querySelector('#sendFileToRemoteBarWrapper').clientWidth;
-        var el = document.querySelector('#sendFileToRemoteBar');
+        var width = sendFileToRemoteBarWrapper.clientWidth;
         var progressbar = (width / message.fragCount) * (message.fragIndex + 1);
 
         if (message.totalSize === message.fragSize) {
           return;
-        };
-        el.style.width = progressbar + 'px';
+        }
+
+        sendFileToRemoteBar.style.width = progressbar + 'px';
       });
 
       dataChannel.on('error', function (event) {
         alert('에러가 발생했습니다.');
       });
     });
-
-    getChannelList();
 
     refreshChannelButton.addEventListener('click', function (event) {
       event.preventDefault();
@@ -349,56 +385,69 @@
     }, false);
 
     startRemoteVideoRecordButton.addEventListener('click', function (event) {
-      var peers = appCallee.getAllPeer();
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
 
       event.preventDefault();
-      if (peers.length) {
-        peers[0].getMedia().record('video');
+
+      if (hasPeers) {
+        firstPeerMedia.record('video');
       }
     }, false);
 
     stopRemoteVideoRecordButton.addEventListener('click', function (event) {
-      var peers = appCallee.getAllPeer();
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
 
       event.preventDefault();
-      if (peers.length) {
-        peers[0].getMedia().recordStop(function (blob) {
-          recordRemoteVideo = blob;
+
+      if (hasPeers) {
+        firstPeerMedia.recordStop(function (blob) {
+          recordedRemoteVideoBlob = blob;
         });
       }
     }, false);
 
     saveRemoteVideoRecordButton.addEventListener('click', function (event) {
       event.preventDefault();
-      if (recordRemoteVideo) {
-        PlayRTC.utils.fileDownload(recordRemoteVideo, 'remote-video.webm');
+      if (recordedRemoteVideoBlob) {
+        PlayRTC.utils.fileDownload(recordedRemoteVideoBlob, 'remote-video.webm');
       }
     }, false);
 
     startRemoteVoiceRecordButton.addEventListener('click', function (event) {
-      var peers = appCallee.getAllPeer();
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
 
       event.preventDefault();
-      if (peers.length) {
-        peers[0].getMedia().record('audio');
+
+      if (hasPeers) {
+        firstPeerMedia.record('audio');
       }
     }, false);
 
     stopRemoteVoiceRecordButton.addEventListener('click', function (event) {
-      var peers = appCallee.getAllPeer();
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
 
       event.preventDefault();
-      if (peers.length) {
-        peers[0].getMedia().recordStop(function (blob) {
-          recordRemoteVoice = blob;
+
+      if (hasPeers) {
+        firstPeerMedia.recordStop(function (blob) {
+          recordedRemoteVoiceBlob = blob;
         });
       }
     }, false);
 
     saveRemoteVoiceRecordButton.addEventListener('click', function (event) {
       event.preventDefault();
-      if (recordRemoteVoice) {
-        PlayRTC.utils.fileDownload(recordRemoteVoice, 'remote-voice.wav');
+
+      if (recordedRemoteVoiceBlob) {
+        PlayRTC.utils.fileDownload(recordedRemoteVoiceBlob, 'remote-voice.wav');
       }
     }, false);
 
@@ -406,6 +455,7 @@
       var media = app.getMedia();
 
       event.preventDefault();
+
       if (media) {
         media.record('video');
       }
@@ -417,15 +467,15 @@
       event.preventDefault();
       if (media) {
         media.recordStop(function (blob) {
-          recordLocalVideo = blob;
+          recordedLocalVideoBlob = blob;
         });
       }
     }, false);
 
     saveLocalVideoRecordButton.addEventListener('click', function (event) {
       event.preventDefault();
-      if (recordLocalVideo) {
-        PlayRTC.utils.fileDownload(recordLocalVideo, 'recordLocalVideo.webm');
+      if (recordedLocalVideoBlob) {
+        PlayRTC.utils.fileDownload(recordedLocalVideoBlob, 'local-video.webm');
       }
     }, false);
 
@@ -433,6 +483,7 @@
       var media = app.getMedia();
 
       event.preventDefault();
+
       if (media) {
         media.record('audio');
       }
@@ -442,43 +493,50 @@
       var media = app.getMedia();
 
       event.preventDefault();
+
       if (media) {
         media.recordStop(function (blob) {
-          recordLocalVoice = blob;
+          recordedLocalVoiceBlob = blob;
         });
       }
     }, false);
 
     saveLocalVoiceRecordButton.addEventListener('click', function (event) {
       event.preventDefault();
-      if (recordLocalVoice) {
-        PlayRTC.utils.fileDownload(recordLocalVoice, 'recordLocalVoice.wav');
+
+      if (recordedLocalVoiceBlob) {
+        PlayRTC.utils.fileDownload(recordedLocalVoiceBlob, 'local-voice.wav');
       }
     }, false);
 
     sendTextButton.addEventListener('click', function (event) {
-      var msg = document.querySelector('#sendMessage').value;
+      var chatParagraph;
+      var message = sendMessageInput.value;
 
       event.preventDefault();
-      if (msg) {
-        var el = document.querySelector('#timeline');
 
-        app.dataSend(msg);
-        el.innerHTML = el.innerHTML + '<p class="remote">' + msg + '</p>';
+      if (message) {
+        app.dataSend(message);
+
+        chatParagraph = document.createElement('p');
+        chatParagraph.classList.add('remote');
+        chatParagraph.textContent = message;
+
+        chattingTimeline.appendChild(chatParagraph);
       }
-      document.getElementById('sendMessage').value = "";
+      sendMessageInput.value = '';
     }, false);
 
     sendFileButton.addEventListener('click', function (event) {
-      var el = document.querySelector('#seclectFile');
-      var val = el.files[0];
+      var myFile = selectFileInput.files[0];
 
       event.preventDefault();
-      if (!val) {
+
+      if (!myFile) {
         return false;
       }
-      app.dataSend(val);
-      el.value = '';
+      app.dataSend(myFile);
+      selectFileInput.value = '';
     }, false);
   </script>
 </body>
