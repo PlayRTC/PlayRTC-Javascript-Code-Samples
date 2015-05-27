@@ -501,13 +501,20 @@
     }, false);
 
     stopLocalVideoRecordButton.addEventListener('click', function(event) {
-      var media = app.getMedia();
-
       event.preventDefault();
-      if (media) {
-        media.recordStop(function(blob) {
-          recordedLocalVideoBlob = blob;
-        });
+
+      // For IE browser
+      if(PlayRTC.utils.browser.name === 'ie') {
+        app.getLocalMedia().recordStop();
+      } else {
+        var media = app.getMedia();
+
+        // For modern browser
+        if (media) {
+          media.recordStop(function(blob) {
+            recordedLocalVideoBlob = blob;
+          });
+        }
       }
     }, false);
 
@@ -529,20 +536,14 @@
     }, false);
 
     stopLocalVoiceRecordButton.addEventListener('click', function(event) {
+      var media = app.getMedia();
+
       event.preventDefault();
 
-      // For IE browser
-      if(PlayRTC.utils.browser.name === 'ie') {
-        app.getLocalMedia().recordStop();
-      } else {
-        var media = app.getMedia();
-
-        // For modern browser
-        if (media) {
-          media.recordStop(function(blob) {
-            recordedLocalVoiceBlob = blob;
-          });
-        }
+      if (media) {
+        media.recordStop(function(blob) {
+          recordedLocalVoiceBlob = blob;
+        });
       }
     }, false);
 
