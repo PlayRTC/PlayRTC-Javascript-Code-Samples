@@ -369,7 +369,15 @@
     }, false);
 
     channelList.addEventListener('click', function(event) {
-      var channelId = event.target.dataset.channelid;
+      var channelId;
+
+      // For IE browser
+      if(PlayRTC.utils.browser.name === 'ie') {
+        event.target.getAttribute('data-channelid')
+      } else {
+        // For modern browser
+        channelId = event.target.dataset.channelid;
+      }
 
       userId = userIdInput.value || 'User';
 
