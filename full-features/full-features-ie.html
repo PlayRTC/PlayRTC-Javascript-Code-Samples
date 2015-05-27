@@ -407,10 +407,8 @@
       event.preventDefault();
 
       // For IE browser
-      if (app.getRemoteMedia()) {
-        if(PlayRTC.utils.browser.name === 'ie'){
-          app.getRemoteMedia().record('%USERPROFILE%\Downloads\remoteVideo');
-        }
+      if(PlayRTC.utils.browser.name === 'ie'){
+        app.getRemoteMedia().record('%USERPROFILE%\Downloads\remoteVideo');
       }
 
       // For modern browser
@@ -427,7 +425,7 @@
       event.preventDefault();
 
       // For IE browser
-      if (app.getRemoteMedia()) {
+      if(PlayRTC.utils.browser.name === 'ie') {
         app.getRemoteMedia().recordStop();
       }
 
@@ -486,10 +484,8 @@
       event.preventDefault();
 
       // For IE browser
-      if (app.getLocalMedia()) {
-        if(PlayRTC.utils.browser.name === 'ie'){
-          app.getLocalMedia().record('%USERPROFILE%\Downloads\localVideo');
-        }
+      if(PlayRTC.utils.browser.name === 'ie') {
+        app.getLocalMedia().record('%USERPROFILE%\Downloads\localVideo');
       }
 
       // For modern browser
@@ -532,7 +528,7 @@
       event.preventDefault();
 
       // For IE browser
-      if (app.getLocalMedia()) {
+      if(PlayRTC.utils.browser.name === 'ie') {
         app.getLocalMedia().recordStop();
       }
 
