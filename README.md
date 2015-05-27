@@ -11,13 +11,13 @@ PlayRTC의 자바스크립트 SDK 코드 샘플
 ### 기본 기능
 PlayRTC의 가장 기본적인 기능인 사용자와 사용자를 연결하고 영상, 음성 통화를 수행
 
-- [Local](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/local.html)
+- [Get Media](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/get-media.html)
   - PlayRTC를 통해 기기의 영상, 음성 가져오기
 - [Audio Only](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/audio-only.html)
   - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 Audio 태그를 사용하여 음성 통화 하기
-- [P2P](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/p2p.html)
+- [Video](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/video.html)
   - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 Video 태그를 사용하여 영상, 음성 통화 하기
-- [P2P Call](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/p2p-call.html)
+- [Calling](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/calling.html)
   - 통화시 상대방의 수락을 기다리기
 
 
@@ -47,6 +47,9 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 ### 녹음/녹화
 영상, 음성의 녹음/녹화
 
+- 주의
+  - 현재 크롬에서 녹화 기능의 완벽하게 지원되지 않고 있으며, 이 테스트를 위해서는 파이어 폭스를 사용할 것
+
 - [Local Audio Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-audio-record.html)
   - 로컬 사용자 오디오 녹음하고 저장하기
 - [Local Video Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-video-record.html)
@@ -71,6 +74,7 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 ### 종합
 - [Full Features](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features.html)
   - 위 기능을 한페이지에서 사용하기
-
+- [IE Full Features](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features-ie.html)
+  - IE 브라우저 지원 Active X를 사용하여 전체 기능 사용하기
 
 COPYRIGHT (c) 2015 SK TELECOM CO. LTD. ALL RIGHTS RESERVED.

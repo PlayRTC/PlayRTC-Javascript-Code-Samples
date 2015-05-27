@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <title>PlayRTC Sample</title>
+  <meta charset="utf-8">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .local-video {
+      width: 165px;
+      height: 165px;
+    }
+
+    .remote-video {
+      width: 320px;
+      height: 240px;
+    }
+
+    @media (min-width: 992px) {
+      .remote-video {
+        width: 640px;
+        height: 480px;
+      }
+    }
+
+    .chat-timeline {
+      height: 200px;
+      font-size: 9px;
+      overflow: auto;
+    }
+
+    .chat-timeline .local {
+      color: blue;
+    }
+
+    .chat-timeline .remote {
+      color: red;
+    }
+
+    @media (min-width: 992px) {
+      .channel-list {
+        font-size: 0.8em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-12">
+        <h1 class="page-header">PlayRTC Sample</h1>
+      </div>
+
+      <div class="col-md-6 col-md-offset-3 hide">
+        <div class="alert alert-info alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          ...
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2">
+
+        <h2 class="h3">Profile/Config</h2>
+        <h3 class="h4">사용자 설정</h3>
+        <form>
+          <div class="form-group">
+            <label class="sr-only" for="userId">User ID</label>
+            <input class="form-control" type="text" id="userId" placeholder="사용자 ID를 설정하세요." value="">
+          </div>
+        </form>
+
+        <h2 class="h3">Channel</h2>
+        <h3 class="h4">채널 생성 및 입장</h3>
+        <form>
+          <div class="from-gruop">
+            <input class="form-control" type="text" id="createChannelId" value="" readonly>
+            <label class="sr-only" for="createChannelId">Channel Id</label>
+          </div>
+          <button class="btn btn-default btn-sm btn-block" id="createChannel">
+            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> 채널 생성
+          </button>
+        </form>
+        <button class="btn btn-default btn-sm btn-block" id="quitChannel">
+          <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 채널 나오기
+        </button>
+
+        <h3 class="h4">채널 목록</h3>
+        <div class="list-group channel-list" id="channelList"></div>
+
+        <button class="btn btn-default btn-sm pull-right" id="refreshChannel">
+          <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
+        </button>
+      </div>
+
+      <div class="col-md-7">
+        <h2 class="h3">Remote</h2>
+        <div class="well">
+          <div class="my" id="remoteStreamIe">
+            <video class="remote-video center-block" id="remoteVideo"></video>
+          </div>
+
+          <div class="text-center hide">
+            <button class="btn btn-default btn-sm" id="saveFileFromRemote">
+              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+            </button>
+          </div>
+
+          <div class="text-center">
+            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+            <div class="btn-group" role="group" aria-label="...">
+              <button class="btn btn-default btn-sm" id="startRemoteVideoRecord">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹화
+              </button>
+              <button class="btn btn-default btn-sm" id="stopRemoteVideoRecord">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+              </button>
+              <button class="btn btn-default btn-sm" id="saveRemoteVideoRecord">
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+              </button>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="...">
+              <button class="btn btn-default btn-sm" id="startRemoteVoiceRecord">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹음
+              </button>
+              <button class="btn btn-default btn-sm" id="stopRemoteVoiceRecord">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+              </button>
+              <button class="btn btn-default btn-sm" id="saveRemoteVoiceRecord">
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+              </button>
+            </div>
+            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-3">
+        <h2 class="h3">Local</h2>
+        <div class="well">
+          <div class="my" id="localStreamIe">
+            <video class="local-video center-block" id="localVideo" muted></video>
+          </div>
+
+          <div class="progress" id="sendFileToRemoteBarWrapper">
+            <div class="progress-bar" id="sendFileToRemoteBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0px;">
+              <!--<span class="sr-only">60% Complete</span>-->
+            </div>
+          </div>
+
+          <div class="text-center">
+            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+            <div class="btn-group" role="group" aria-label="...">
+              <button class="btn btn-default btn-sm" id="startLocalVideoRecord">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹화
+              </button>
+              <button class="btn btn-default btn-sm" id="stopLocalVideoRecord">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+              </button>
+              <button class="btn btn-default btn-sm" id="saveLocalVideoRecord">
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+              </button>
+            </div>
+
+            <br>
+
+            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+            <div class="btn-group" role="group" aria-label="...">
+              <button class="btn btn-default btn-sm" id="startLocalVoiceRecord">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹음
+              </button>
+              <button class="btn btn-default btn-sm" id="stopLocalVoiceRecord">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+              </button>
+              <button class="btn btn-default btn-sm" id="saveLocalVoiceRecord">
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="well chat-timeline" id="timeline" style="overflow: auto;">
+        </div>
+
+        <form>
+          <label class="sr-only" for="sendMessage">전송 내용</label>
+          <div class="input-group input-group-sm">
+            <div class="input-group-addon">
+              <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </div>
+            <input type="text" class="form-control" id="sendMessage" placeholder="전송할 내용을 입력하세요">
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="sendText">
+                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 전송
+              </button>
+            </span>
+          </div>
+        </form>
+
+        <form class="form-inline">
+          <div class="row">
+            <div class="col-md-8">
+              <label class="sr-only" for="selectFile">전송할 파일을 선택하세요</label>
+              <input type="file" id="selectFile">
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-default btn-xs pull-right" id="sendFile">
+                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 전송
+              </button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
+  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
+
+  <script src="http://www.playrtc.com/sdk/js/playrtc.js"></script>
+  <script>
+    'use strict';
+
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelIdInput = document.querySelector('#createChannelId');
+    var refreshChannelButton = document.querySelector('#refreshChannel');
+    var channelList = document.querySelector('#channelList');
+    var getChannelList;
+    var quitChannelButton = document.querySelector('#quitChannel');
+    var startRemoteVideoRecordButton = document.querySelector('#startRemoteVideoRecord');
+    var stopRemoteVideoRecordButton = document.querySelector('#stopRemoteVideoRecord');
+    var saveRemoteVideoRecordButton = document.querySelector('#saveRemoteVideoRecord');
+    var startRemoteVoiceRecordButton = document.querySelector('#startRemoteVoiceRecord');
+    var stopRemoteVoiceRecordButton = document.querySelector('#startRemoteVoiceRecord');
+    var saveRemoteVoiceRecordButton = document.querySelector('#saveRemoteVoiceRecord');
+    var startLocalVideoRecordButton = document.querySelector('#startLocalVideoRecord');
+    var stopLocalVideoRecordButton = document.querySelector('#stopLocalVideoRecord');
+    var saveLocalVideoRecordButton = document.querySelector('#saveLocalVideoRecord');
+    var startLocalVoiceRecordButton = document.querySelector('#startLocalVoiceRecord');
+    var stopLocalVoiceRecordButton = document.querySelector('#stopLocalVoiceRecord');
+    var saveLocalVoiceRecordButton = document.querySelector('#saveLocalVoiceRecord');
+    var chattingTimeline = document.querySelector('#timeline');
+    var sendMessageInput = document.querySelector('#sendMessage');
+    var selectFileInput = document.querySelector('#selectFile');
+    var sendTextButton = document.querySelector('#sendText');
+    var sendFileButton = document.querySelector('#sendFile');
+    var sendFileToRemoteBar = document.querySelector('#sendFileToRemoteBar');
+    var sendFileToRemoteBarWrapper = document.querySelector('#sendFileToRemoteBarWrapper');
+    var local = 'localStream';
+    var remote = 'remoteStream';
+    var remoteVideo = document.querySelector('#remoteVideo');
+    var localVideo = document.querySelector('#localVideo');
+    var recordedRemoteVideoBlob;
+    var recordedRemoteVoiceBlob;
+    var recordedLocalVideoBlob;
+    var recordedLocalVoiceBlob;
+    var userIdInput = document.querySelector('#userId');
+    var userId;
+    var app;
+
+    if (PlayRTC.utils.browser.name === 'ie') {
+      local = 'localStreamIe';
+      remote = 'remoteStreamIe';
+    }
+
+    app = new PlayRTC({
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localVideoTarget: 'local',
+      remoteVideoTarget: 'remote'
+    });
+
+    getChannelList = function() {
+      app.getChannelList(function(result) {
+        var channels = result.channels;
+        var channelsLength = channels.length;
+
+        while (channelList.hasChildNodes()) {
+          channelList.removeChild(channelList.firstChild);
+        }
+
+        for (var i = 0; i < channelsLength; i++) {
+          var channelListAnchor = document.createElement('a');
+          var linkIcon = document.createElement('span');
+
+          channelListAnchor.classList.add('list-group-item');
+          channelListAnchor.setAttribute('data-channelid', channels[i].channelId);
+          channelListAnchor.textContent = channels[i].channelId;
+
+          linkIcon.classList.add('glyphicon', 'glyphicon-menu-right', 'pull-right');
+          linkIcon.setAttribute('aria-hidden', 'true');
+
+          channelListAnchor.appendChild(linkIcon);
+
+          channelList.appendChild(channelListAnchor);
+        }
+      });
+    }
+
+    getChannelList();
+
+    app.on('connectChannel', function(channelId) {
+      createChannelIdInput.value = channelId;
+      getChannelList();
+    });
+
+    app.on('disconnectChannel', function(channelId) {
+      createChannelIdInput.value = '';
+
+      while (chattingTimeline.hasChildNodes()) {
+        chattingTimeline.removeChild(chattingTimeline.firstChild);
+      }
+
+      getChannelList();
+    });
+
+    app.on('otherDisconnectChannel', function(channelId) {
+      remoteVideo.src = '';
+
+      while (chattingTimeline.hasChildNodes()) {
+        chattingTimeline.removeChild(chattingTimeline.firstChild);
+      }
+
+      getChannelList();
+    });
+
+    app.on('addDataStream', function(pid, uid, dataChannel) {
+      dataChannel.on('message', function(message) {
+        var chatParagraph;
+
+        if (message.type === 'text') {
+          chatParagraph = document.createElement('p');
+          chatParagraph.classList.add('local');
+          chatParagraph.textContent = message.data;
+
+          chattingTimeline.appendChild(chatParagraph);
+        } else if (message.type === 'file') {
+          PlayRTC.utils.fileDownload(message.blob, message.fileName);
+          sendFileToRemoteBar.style.width = '0px';
+        }
+      });
+
+      dataChannel.on('progress', function(message) {
+        var width = sendFileToRemoteBarWrapper.clientWidth;
+        var progressbar = (width / message.fragCount) * (message.fragIndex + 1);
+
+        if (message.totalSize === message.fragSize) {
+          return;
+        }
+
+        sendFileToRemoteBar.style.width = progressbar + 'px';
+      });
+
+      dataChannel.on('error', function(event) {
+        alert('에러가 발생했습니다.');
+      });
+    });
+
+    refreshChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      getChannelList();
+    }, false);
+
+    channelList.addEventListener('click', function(event) {
+      var channelId = event.target.dataset.channelid;
+
+      userId = userIdInput.value;
+
+      app.connectChannel(channelId, {
+        peer: {
+          uid: userId
+        }
+      });
+
+    }, false);
+
+    createChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      userId = userIdInput.value;
+
+      app.createChannel({
+        peer: {
+          uid: userId
+        }
+      })
+
+    }, false);
+
+    quitChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      app.disconnectChannel();
+    }, false);
+
+    startRemoteVideoRecordButton.addEventListener('click', function(event) {
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
+
+      event.preventDefault();
+
+      // For IE browser
+      if (app.getRemoteMedia()) {
+        if(PlayRTC.utils.browser.name === 'ie'){
+          app.getRemoteMedia().record('%USERPROFILE%\Downloads\remoteVideo');
+        }
+      }
+
+      // For modern browser
+      if (hasPeers) {
+        firstPeerMedia.record('video');
+      }
+    }, false);
+
+    stopRemoteVideoRecordButton.addEventListener('click', function(event) {
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
+
+      event.preventDefault();
+
+      // For IE browser
+      if (app.getRemoteMedia()) {
+        app.getRemoteMedia().recordStop();
+      }
+
+      // For modern browser
+      if (hasPeers) {
+        firstPeerMedia.recordStop(function(blob) {
+          recordedRemoteVideoBlob = blob;
+        });
+      }
+    }, false);
+
+    saveRemoteVideoRecordButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      if (recordedRemoteVideoBlob) {
+        PlayRTC.utils.fileDownload(recordedRemoteVideoBlob, 'remote-video.webm');
+      }
+    }, false);
+
+    startRemoteVoiceRecordButton.addEventListener('click', function(event) {
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
+
+      event.preventDefault();
+
+      if (hasPeers) {
+        firstPeerMedia.record('audio');
+      }
+    }, false);
+
+    stopRemoteVoiceRecordButton.addEventListener('click', function(event) {
+      var peers = app.getAllPeer();
+      var hasPeers = peers.length > 0;
+      var firstPeerMedia = peers[0].getMedia();
+
+      event.preventDefault();
+
+      if (hasPeers) {
+        firstPeerMedia.recordStop(function(blob) {
+          recordedRemoteVoiceBlob = blob;
+        });
+      }
+    }, false);
+
+    saveRemoteVoiceRecordButton.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      if (recordedRemoteVoiceBlob) {
+        PlayRTC.utils.fileDownload(recordedRemoteVoiceBlob, 'remote-voice.wav');
+      }
+    }, false);
+
+    startLocalVideoRecordButton.addEventListener('click', function(event) {
+      var media = app.getMedia();
+
+      event.preventDefault();
+
+      // For IE browser
+      if (app.getLocalMedia()) {
+        if(PlayRTC.utils.browser.name === 'ie'){
+          app.getLocalMedia().record('%USERPROFILE%\Downloads\localVideo');
+        }
+      }
+
+      // For modern browser
+      if (media) {
+        media.record('video');
+      }
+    }, false);
+
+    stopLocalVideoRecordButton.addEventListener('click', function(event) {
+      var media = app.getMedia();
+
+      event.preventDefault();
+      if (media) {
+        media.recordStop(function(blob) {
+          recordedLocalVideoBlob = blob;
+        });
+      }
+    }, false);
+
+    saveLocalVideoRecordButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      if (recordedLocalVideoBlob) {
+        PlayRTC.utils.fileDownload(recordedLocalVideoBlob, 'local-video.webm');
+      }
+    }, false);
+
+    startLocalVoiceRecordButton.addEventListener('click', function(event) {
+      var media = app.getMedia();
+
+      event.preventDefault();
+
+      if (media) {
+        media.record('audio');
+      }
+    }, false);
+
+    stopLocalVoiceRecordButton.addEventListener('click', function(event) {
+      var media = app.getMedia();
+
+      event.preventDefault();
+
+      // For IE browser
+      if (app.getLocalMedia()) {
+        app.getLocalMedia().recordStop();
+      }
+
+      // For modern browser
+      if (media) {
+        media.recordStop(function(blob) {
+          recordedLocalVoiceBlob = blob;
+        });
+      }
+    }, false);
+
+    saveLocalVoiceRecordButton.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      if (recordedLocalVoiceBlob) {
+        PlayRTC.utils.fileDownload(recordedLocalVoiceBlob, 'local-voice.wav');
+      }
+    }, false);
+
+    sendTextButton.addEventListener('click', function(event) {
+      var chatParagraph;
+      var message = sendMessageInput.value;
+
+      event.preventDefault();
+
+      if (message) {
+        app.dataSend(message);
+
+        chatParagraph = document.createElement('p');
+        chatParagraph.classList.add('remote');
+        chatParagraph.textContent = message;
+
+        chattingTimeline.appendChild(chatParagraph);
+      }
+      sendMessageInput.value = '';
+    }, false);
+
+    sendFileButton.addEventListener('click', function(event) {
+      var myFile = selectFileInput.files[0];
+
+      event.preventDefault();
+
+      if (!myFile) {
+        return false;
+      }
+      app.dataSend(myFile);
+      selectFileInput.value = '';
+    }, false);
+  </script>
+</body>
+
+</html>
