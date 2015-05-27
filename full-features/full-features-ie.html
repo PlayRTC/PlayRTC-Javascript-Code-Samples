@@ -101,7 +101,7 @@
       <div class="col-md-7">
         <h2 class="h3">Remote</h2>
         <div class="well">
-          <div class="my" id="remoteStreamIe">
+          <div class="my" id="remoteVideoIe">
             <video class="remote-video center-block" id="remoteVideo"></video>
           </div>
 
@@ -144,7 +144,7 @@
       <div class="col-md-3">
         <h2 class="h3">Local</h2>
         <div class="well">
-          <div class="my" id="localStreamIe">
+          <div class="my" id="localVideoIe">
             <video class="local-video center-block" id="localVideo" muted></video>
           </div>
 
@@ -254,8 +254,8 @@
     var sendFileButton = document.querySelector('#sendFile');
     var sendFileToRemoteBar = document.querySelector('#sendFileToRemoteBar');
     var sendFileToRemoteBarWrapper = document.querySelector('#sendFileToRemoteBarWrapper');
-    var local = 'localStream';
-    var remote = 'remoteStream';
+    var localVideoEl = 'localVideo';
+    var remoteVideoEl = 'remoteVideo';
     var remoteVideo = document.querySelector('#remoteVideo');
     var localVideo = document.querySelector('#localVideo');
     var recordedRemoteVideoBlob;
@@ -267,14 +267,14 @@
     var app;
 
     if (PlayRTC.utils.browser.name === 'ie') {
-      local = 'localStreamIe';
-      remote = 'remoteStreamIe';
+      localVideoEl = 'localVideoIe';
+      remoteVideoEl = 'remoteVideoIe';
     }
 
     app = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      localVideoTarget: 'local',
-      remoteVideoTarget: 'remote'
+      localVideoTarget: localVideoEl,
+      remoteVideoTarget: remoteVideoEl
     });
 
     getChannelList = function() {
