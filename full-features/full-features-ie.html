@@ -404,7 +404,7 @@
 
       // For IE browser
       if(PlayRTC.utils.browser.name === 'ie'){
-        app.getRemoteMedia().record('%USERPROFILE%\Downloads\remoteVideo');
+        app.getRemoteMedia().record('remoteVideo');
       }
       else{
         var peers = app.getAllPeer();
@@ -487,7 +487,7 @@
 
       // For IE browser
       if(PlayRTC.utils.browser.name === 'ie') {
-        app.getLocalMedia().record('%USERPROFILE%\Downloads\localVideo');
+        app.getLocalMedia().record('localVideo');
       } else {
         var media = app.getMedia();
 
