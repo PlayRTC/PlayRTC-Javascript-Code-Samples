@@ -373,7 +373,7 @@
 
       // For IE browser
       if(PlayRTC.utils.browser.name === 'ie') {
-        event.target.getAttribute('data-channelid')
+        channelId = event.target.getAttribute('data-channelid');
       } else {
         // For modern browser
         channelId = event.target.dataset.channelid;
