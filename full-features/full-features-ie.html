@@ -371,7 +371,7 @@
     channelList.addEventListener('click', function(event) {
       var channelId = event.target.dataset.channelid;
 
-      userId = userIdInput.value;
+      userId = userIdInput.value || 'User';
 
       app.connectChannel(channelId, {
         peer: {
@@ -384,7 +384,7 @@
     createChannelButton.addEventListener('click', function(event) {
       event.preventDefault();
 
-      userId = userIdInput.value;
+      userId = userIdInput.value || 'User';
 
       app.createChannel({
         peer: {
