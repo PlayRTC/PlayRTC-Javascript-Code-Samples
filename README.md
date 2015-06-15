@@ -35,7 +35,6 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
   - 파이어 폭스의 경우 아래의 예제에서는 에러가 생기게 되며, 이는 한 페이지에서 데이터 채널 객체를 하나만 생성하여 사용할 수 있기 때문
   - 파이어 폭스에서 데이터 채널을 테스트를 진행하고자 하면 아래의 `종합`을 사용하여 테스트를 진행
   - 크롬은 정상작동
-
 - [Text](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-text.html)
   - 데이터 채널로 문자 보내기
 - [File](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-file.html)
@@ -49,7 +48,6 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 
 - 주의
   - 현재 크롬에서 녹화 기능의 완벽하게 지원되지 않고 있으며, 이 테스트를 위해서는 파이어 폭스를 사용할 것
-
 - [Local Audio Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-audio-record.html)
   - 로컬 사용자 오디오 녹음하고 저장하기
 - [Local Video Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-video-record.html)
