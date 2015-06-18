@@ -2,9 +2,9 @@
 <html lang="kr">
 
 <head>
-  <title>데이터 채널 사용 하여 텍스트 보내기, 받기</title>
+  <title>Data Channel : Text - PlayRTC</title>
   <meta charset="utf-8">
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
   <style>
     .local-video {
       width: 80px;
@@ -29,32 +29,31 @@
     <div class="row">
 
       <div class="col-md-12">
-        <h1 class="page-header">데이터 채널 사용 하여 텍스트 보내기, 받기 - PlayRTC Test</h1>
+        <h1 class="page-header">Data Channel : Text - PlayRTC</h1>
       </div>
 
       <div class="col-md-6">
         <h2 class="h3">Caller</h2>
-        <h3 class="h4">채널 생성 및 입장</h3>
+        <h3 class="h4">Create and Connect Channel</h3>
         <form class="form-inline">
           <div class="form-group">
             <label class="sr-only" for="createChannelId">Channel Id</label>
-            <input class="form-control" type="text" id="createChannelId" placeholder="채널을 생성하세요." value="" readonly>
+            <input class="form-control" type="text" id="createChannelId" placeholder="Create and connect the channel." value="" readonly>
           </div>
           <button class="btn btn-default" id="createChannel">
-            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> 채널 생성
+            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Create Channel
           </button>
         </form>
 
-        <video class="remote-video center-block" id="callerRemoteVideo"></video>
-        <video class="local-video pull-right" id="callerLocalVideo"></video>
+        <hr>
 
         <form class="form-inline">
           <div class="form-group">
-            <label for="sendMessage">전송 내용</label>
-            <input type="text" class="form-control" id="sendMessage" placeholder="전송할 내용을 입력하세요">
+            <label for="sendMessage">Transfer Message</label>
+            <input type="text" class="form-control" id="sendMessage" placeholder="Enter your transfer message.">
           </div>
           <button class="btn btn-default" id="send">
-            <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 전송
+            <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Send
           </button>
         </form>
 
@@ -62,24 +61,22 @@
 
       <div class="col-md-6">
         <h2 class="h3">Callee</h2>
-
-        <h3 class="h4">채널 입장</h3>
+        <h3 class="h4">Connect Channel</h3>
         <form class="form-inline">
           <div class="form-group">
             <label class="sr-only" for="connectChannelId">Channel Id</label>
-            <input class="form-control" type="text" id="connectChannelId" placeholder="ChannelId를 입력하세요." value="">
+            <input class="form-control" type="text" id="connectChannelId" placeholder="Enter the channel id." value="">
           </div>
           <button class="btn btn-default" id="connectChannel">
-            <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> 채널 입장
+            <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> Connect Channel
           </button>
         </form>
 
-        <video class="remote-video center-block" id="calleeRemoteVideo"></video>
-        <video class="local-video pull-right" id="calleeLocalVideo"></video>
+        <hr>
 
         <form class="form-inline">
           <div class="form-group">
-            <label for="recevedMessage">받은 내용</label>
+            <label for="recevedMessage">Recived Message</label>
             <input type="text" class="form-control" id="recevedMessage" readonly>
           </div>
         </form>
@@ -90,7 +87,7 @@
   </div>
 
   <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
-  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
+  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 
   <script src="http://www.playrtc.com/sdk/js/playrtc.js"></script>
   <script>
@@ -104,8 +101,10 @@
 
     appCaller = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      localVideoTarget: 'callerLocalVideo',
-      remoteVideoTarget: 'callerRemoteVideo'
+      userMedia: {
+        audio: false,
+        video: false
+      }
     });
 
     appCaller.on('connectChannel', function (channelId) {
@@ -138,9 +137,11 @@
     var appCallee;
 
     appCallee = new PlayRTC({
-      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
-      localVideoTarget: "calleeLocalVideo",
-      remoteVideoTarget: "calleeRemoteVideo"
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      userMedia: {
+        audio: false,
+        video: false
+      }
     });
 
     appCallee.on('addDataStream', function (pid, uid, dataChannel) {

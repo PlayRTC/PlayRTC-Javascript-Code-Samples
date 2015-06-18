@@ -10,10 +10,12 @@
       width: 165px;
       height: 165px;
     }
+
     .remote-video {
       width: 640px;
       height: 480px;
     }
+
     .chat-timeline {
       height: 200px;
       font-size: 9px;
@@ -102,13 +104,13 @@
     'use strict';
 
     function timeGap(s, e){
-      var gap = new Date(0, 0, 0, 0, 0, 0, e - s); 
+      var gap = new Date(0, 0, 0, 0, 0, 0, e - s);
 
-      var diffHour = gap.getHours();       // 시간 
+      var diffHour = gap.getHours();       // 시간
       var diffMin  = gap.getMinutes();      // 분
       var diffSec  = gap.getSeconds();      // 초
       var diffmmSec  = gap.getMilliseconds();      // 초
-       
+
       return diffSec + "." + diffmmSec;
     }
 
