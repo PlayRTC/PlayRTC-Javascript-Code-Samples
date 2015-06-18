@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Channel - PlayRTC</title>
+  <meta charset="utf-8">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .local-video {
+      width: 80px;
+      height: 60px;
+      z-index: 10;
+      position: relative;
+      top: -100px;
+      right: 30px;
+    }
+
+    .remote-video {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 320px;
+      height: 240px;
+    }
+
+    @media (min-width: 992px) {
+      .channel-list {
+        font-size: 0.8em;
+      }
+    }
+
+    .form-inline .form-group{
+      margin-left: 0;
+      margin-right: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-12">
+        <h1 class="page-header">Channel - PlayRTC</h1>
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="h3">Channel Manipulate</h2>
+
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="createChannelId">Create</label>
+            <div class="col-sm-9 form-inline">
+              <div class="form-group">
+                <input class="form-control" type="text" id="createChannelId" placeholder="Create channel." value="" readonly>
+                <button class="btn btn-default" id="createChannel">
+                  <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Create
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="connectChannelId">Connect</label>
+            <div class="col-sm-9">
+              <div class="form-inline">
+                <div class="form-group">
+                  <input class="form-control" type="text" id="connectChannelId" placeholder="Enter the Channel id." value="">
+                  <button class="btn btn-default" id="connectChannel">
+                    <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> Connect Channel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="disconnectChannel">Disconnect</label>
+            <div class="col-sm-9">
+              <button class="btn btn-default" id="disconnectChannel">
+                <span class="glyphicon glyphicon-scissors" aria-hidden="true"></span> Disconnect
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="deleteChannel">Delete</label>
+            <div class="col-sm-9">
+              <button class="btn btn-default" id="deleteChannel">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete
+              </button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="h3">Channel List</h2>
+        <div class="row">
+
+          <div class="col-md-4">
+            <div class="list-group channel-list" id="channelList"></div>
+            <button class="btn btn-default" id="refreshChannel">
+              <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+            </button>
+          </div>
+
+          <div class="col-md-8">
+            <video class="remote-video center-block" id="calleeRemoteVideo"></video>
+            <video class="local-video pull-right" id="calleeLocalVideo"></video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
+  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+
+  <script src="http://www.playrtc.com/sdk/js/playrtc.js"></script>
+  <script>
+    'use strict';
+
+    var createChannelButton = document.querySelector('#createChannel');
+    var connectChannelButton = document.querySelector('#connectChannel');
+    var createChannelIdInput = document.querySelector('#createChannelId');
+    var connectChannelIdInput = document.querySelector('#connectChannelId');
+    var disconnectChannelButton = document.querySelector('#disconnectChannel');
+    var deleteChannelButton = document.querySelector('#deleteChannel');
+    var appActor;
+
+    appActor = new PlayRTC({
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      userMedia: {
+        audio: false,
+        video: false
+      }
+    });
+
+    appActor.on('connectChannel', function(channelId) {
+      createChannelIdInput.value = channelId;
+    });
+
+    createChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      appActor.createChannel();
+    }, false);
+
+    connectChannelButton.addEventListener('click', function(event) {
+      var channelId = connectChannelIdInput.value;
+      event.preventDefault();
+      if (!channelId) {
+        return;
+      }
+      appActor.connectChannel(channelId);
+    }, false);
+
+    disconnectChannelButton.addEventListener('click', function(event){
+      event.preventDefault();
+      appActor.disconnectChannel();
+    })
+
+    deleteChannelButton.addEventListener('click', function(event){
+      event.preventDefault();
+      appActor.deleteChannel();
+    })
+  </script>
+  <script>
+    'use strict';
+
+    var connectChannelIdInput = document.querySelector('#connectChannelId');
+    var refreshChannelButton = document.querySelector('#refreshChannel');
+    var channelList = document.querySelector('#channelList');
+    var appWatcher;
+    var getChannelList;
+
+    getChannelList = function () {
+      appWatcher.getChannelList(function (result) {
+        var channels = result.channels;
+        var channelsLength = channels.length;
+
+        while (channelList.hasChildNodes()) {
+          channelList.removeChild(channelList.firstChild);
+        }
+
+        for (var i = 0; i < channelsLength; i++) {
+          var channelListAnchor = document.createElement('a');
+          var linkIcon = document.createElement('span');
+
+          channelListAnchor.classList.add('list-group-item');
+          channelListAnchor.setAttribute('data-channelid',channels[i].channelId);
+          channelListAnchor.textContent = channels[i].channelId;
+
+          linkIcon.classList.add('glyphicon', 'glyphicon-menu-right', 'pull-right');
+          linkIcon.setAttribute('aria-hidden', 'true');
+
+          channelListAnchor.appendChild(linkIcon);
+
+          channelList.appendChild(channelListAnchor);
+        }
+      });
+    };
+
+    appWatcher = new PlayRTC({
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      userMedia: {
+        audio: false,
+        video: false
+      }
+    });
+
+    refreshChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      getChannelList();
+    }, false);
+
+    getChannelList();
+
+  </script>
+</body>
+
+</html>

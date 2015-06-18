@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="kr">
+<html lang="en">
 
 <head>
   <title>DataChannel : Big File - PlayRTC</title>
@@ -156,7 +156,7 @@
     appCallee.on('addDataStream', function (pid, uid, dataChannel) {
       dataChannel.on('message', function (message) {
         if (message.type === 'file') {
-          alert('파일을 받았습니다. 저장해주세요.');
+          alert('A file received. Please save the file.');
           file = message;
         }
       });
@@ -169,7 +169,7 @@
       });
 
       dataChannel.on('error', function (event) {
-        alert('에러가 발생했습니다.');
+        alert('ERROR. See the log.');
       });
     });
 
