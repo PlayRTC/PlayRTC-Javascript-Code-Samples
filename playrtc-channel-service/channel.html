@@ -63,7 +63,7 @@
             <div class="col-sm-9">
               <div class="form-inline">
                 <div class="form-group">
-                  <input class="form-control" type="text" id="connectChannelId" placeholder="Enter the Channel id." value="">
+                  <input class="form-control" type="text" id="connectChannelId" placeholder="Enter the channel id." value="">
                   <button class="btn btn-default" id="connectChannel">
                     <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> Connect Channel
                   </button>
@@ -136,6 +136,14 @@
 
     appActor.on('connectChannel', function(channelId) {
       createChannelIdInput.value = channelId;
+    });
+
+    appActor.on('disconnectChannel', function() {
+      createChannelIdInput.value = null;
+    });
+
+    appActor.on('deleteChannel', function() {
+      createChannelIdInput.value = null;
     });
 
     createChannelButton.addEventListener('click', function(event) {

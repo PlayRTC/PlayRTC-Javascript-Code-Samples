@@ -67,34 +67,34 @@
       <div class="col-md-2">
 
         <h2 class="h3">Profile/Config</h2>
-        <h3 class="h4">사용자 설정</h3>
+        <h3 class="h4">User Id</h3>
         <form>
           <div class="form-group">
-            <label class="sr-only" for="userId">User ID</label>
-            <input class="form-control" type="text" id="userId" placeholder="사용자 ID를 설정하세요." value="">
+            <label class="sr-only" for="userId">User Id</label>
+            <input class="form-control" type="text" id="userId" placeholder="Enter your user id." value="">
           </div>
         </form>
 
         <h2 class="h3">Channel</h2>
-        <h3 class="h4">채널 생성 및 입장</h3>
+        <h3 class="h4">Create</h3>
         <form>
           <div class="from-gruop">
-            <input class="form-control" type="text" id="createChannelId" value="" readonly>
+            <input class="form-control" type="text" id="createChannelId" placeholder="Create and connect the channel." value="" readonly="">
             <label class="sr-only" for="createChannelId">Channel Id</label>
           </div>
           <button class="btn btn-default btn-sm btn-block" id="createChannel">
-            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> 채널 생성
+            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Create
           </button>
         </form>
-        <button class="btn btn-default btn-sm btn-block" id="quitChannel">
-          <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 채널 나오기
+        <button class="btn btn-default btn-sm btn-block" id="disconnectChannel">
+          <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Disconnect
         </button>
 
-        <h3 class="h4">채널 목록</h3>
+        <h3 class="h4">Channel List</h3>
         <div class="list-group channel-list" id="channelList"></div>
 
         <button class="btn btn-default btn-sm pull-right" id="refreshChannel">
-          <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 새로고침
+          <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
         </button>
       </div>
 
@@ -107,7 +107,7 @@
 
           <div class="text-center hide">
             <button class="btn btn-default btn-sm" id="saveFileFromRemote">
-              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
             </button>
           </div>
 
@@ -115,32 +115,32 @@
             <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
             <div class="btn-group" role="group" aria-label="...">
               <button class="btn btn-default btn-sm" id="startRemoteVideoRecord">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹화
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Record
               </button>
               <button class="btn btn-default btn-sm" id="stopRemoteVideoRecord">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
               </button>
               <button class="btn btn-default btn-sm" id="saveRemoteVideoRecord">
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
               </button>
             </div>
 
             <div class="btn-group" role="group" aria-label="...">
               <button class="btn btn-default btn-sm" id="startRemoteVoiceRecord">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹음
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Record
               </button>
               <button class="btn btn-default btn-sm" id="stopRemoteVoiceRecord">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
               </button>
               <button class="btn btn-default btn-sm" id="saveRemoteVoiceRecord">
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
               </button>
             </div>
             <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
           </div>
         </div>
-
       </div>
+
       <div class="col-md-3">
         <h2 class="h3">Local</h2>
         <div class="well">
@@ -158,13 +158,13 @@
             <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
             <div class="btn-group" role="group" aria-label="...">
               <button class="btn btn-default btn-sm" id="startLocalVideoRecord">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹화
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Record
               </button>
               <button class="btn btn-default btn-sm" id="stopLocalVideoRecord">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
               </button>
               <button class="btn btn-default btn-sm" id="saveLocalVideoRecord">
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
               </button>
             </div>
 
@@ -173,13 +173,13 @@
             <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
             <div class="btn-group" role="group" aria-label="...">
               <button class="btn btn-default btn-sm" id="startLocalVoiceRecord">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> 녹음
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Record
               </button>
               <button class="btn btn-default btn-sm" id="stopLocalVoiceRecord">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 중지
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
               </button>
               <button class="btn btn-default btn-sm" id="saveLocalVoiceRecord">
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> 저장
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
               </button>
             </div>
           </div>
@@ -190,15 +190,15 @@
         </div>
 
         <form>
-          <label class="sr-only" for="sendMessage">전송 내용</label>
+          <label class="sr-only" for="sendMessage">Transfer Message</label>
           <div class="input-group input-group-sm">
             <div class="input-group-addon">
               <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
             </div>
-            <input type="text" class="form-control" id="sendMessage" placeholder="전송할 내용을 입력하세요">
+            <input type="text" class="form-control" id="sendMessage" placeholder="Enter your message.">
             <span class="input-group-btn">
               <button class="btn btn-default" id="sendText">
-                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 전송
+                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Send
               </button>
             </span>
           </div>
@@ -207,12 +207,12 @@
         <form class="form-inline">
           <div class="row">
             <div class="col-md-8">
-              <label class="sr-only" for="selectFile">전송할 파일을 선택하세요</label>
+              <label class="sr-only" for="selectFile">Choose File</label>
               <input type="file" id="selectFile">
             </div>
             <div class="col-md-4">
               <button class="btn btn-default btn-xs pull-right" id="sendFile">
-                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 전송
+                <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Send
               </button>
             </div>
           </div>
@@ -234,7 +234,7 @@
     var refreshChannelButton = document.querySelector('#refreshChannel');
     var channelList = document.querySelector('#channelList');
     var getChannelList;
-    var quitChannelButton = document.querySelector('#quitChannel');
+    var disconnectChannelButton = document.querySelector('#disconnectChannel');
     var startRemoteVideoRecordButton = document.querySelector('#startRemoteVideoRecord');
     var stopRemoteVideoRecordButton = document.querySelector('#stopRemoteVideoRecord');
     var saveRemoteVideoRecordButton = document.querySelector('#saveRemoteVideoRecord');
@@ -359,7 +359,7 @@
       });
 
       dataChannel.on('error', function(event) {
-        alert('에러가 발생했습니다.');
+        alert('ERROR. See the log.');
       });
     });
 
@@ -402,7 +402,7 @@
 
     }, false);
 
-    quitChannelButton.addEventListener('click', function(event) {
+    disconnectChannelButton.addEventListener('click', function(event) {
       event.preventDefault();
       app.disconnectChannel();
     }, false);
