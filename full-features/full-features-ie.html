@@ -570,7 +570,7 @@
       event.preventDefault();
 
       if (message) {
-        app.dataSend(message);
+        app.textSend(message);
 
         chatParagraph = document.createElement('p');
         chatParagraph.classList.add('remote');
@@ -582,15 +582,23 @@
     }, false);
 
     sendFileButton.addEventListener('click', function(event) {
-      var myFile = selectFileInput.files[0];
-
-      event.preventDefault();
-
-      if (!myFile) {
-        return false;
+      // For IE browser
+      if (PlayRTC.utils.browser.name === 'ie') {
+	      var path = app.selectFile();
+	      app.fileSend(path);
       }
-      app.dataSend(myFile);
-      selectFileInput.value = '';
+      else{
+    	  // For modern browser
+    	  var myFile = selectFileInput.files[0];
+    		
+	      event.preventDefault();
+	
+	      if (!myFile) {
+	        return false;
+	      }
+	      app.fileSend(myFile);
+	      selectFileInput.value = '';
+      }
     }, false);
   </script>
 </body>
