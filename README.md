@@ -11,20 +11,20 @@ PlayRTC의 자바스크립트 SDK 코드 샘플
 ### 기본 기능
 PlayRTC의 가장 기본적인 기능인 사용자와 사용자를 연결하고 영상, 음성 통화를 수행
 
-- [Get Media](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/get-media.html)
+- [Get Media](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/get-media.html)
   - PlayRTC를 통해 기기의 영상, 음성 가져오기
-- [Media Stream - Audio Only](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/mediastream-audio.html)
+- [Media Stream - Audio Only](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/mediastream-audio.html)
   - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 Audio 태그를 사용하여 음성 통화 하기
-- [Media Stream - Video and Audio](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/mediastream-video.html)
+- [Media Stream - Video and Audio](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/mediastream-video.html)
   - PlayRTC를 통해 사용자(Peer)와 사용자(Peer)끼리 Video 태그를 사용하여 영상, 음성 통화 하기
-- [Calling](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/calling.html)
+- [Calling](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/basic/calling.html)
   - 통화시 상대방의 수락을 기다리기
 
 
 ### PlayRTC 서버 제공 채널 서비스
 PlayRTC 서비스가 제공하는 채널 기능 사용
 
-- [Channel](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/playrtc-channel-service/channel.html)
+- [Channel](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/playrtc-channel-service/channel.html)
   - 채널 목록을 가져와 표출하기
 
 
@@ -35,11 +35,11 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
   - 파이어 폭스의 경우 아래의 예제에서는 에러가 생기게 되며, 이는 한 페이지에서 데이터 채널 객체를 하나만 생성하여 사용할 수 있기 때문
   - 파이어 폭스에서 데이터 채널을 테스트를 진행하고자 하면 아래의 `종합`을 사용하여 테스트를 진행
   - 크롬은 정상작동
-- [Text](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-text.html)
+- [Text](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-text.html)
   - 데이터 채널로 문자 보내기
-- [File](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-file.html)
+- [File](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-file.html)
   - 데이터 채널로 파일 보내기
-- [Big File](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-big-file.html)
+- [Big File](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/datachannel/datachannel-big-file.html)
   - 데이터 채널로 큰 파일 보내고, 진행상황을 표시 하기
 
 
@@ -48,31 +48,31 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 
 - 주의
   - 현재 크롬에서 녹화 기능의 완벽하게 지원되지 않고 있으며, 이 테스트를 위해서는 파이어 폭스를 사용할 것
-- [Local Audio Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-audio-record.html)
+- [Local Audio Record](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-audio-record.html)
   - 로컬 사용자 오디오 녹음하고 저장하기
-- [Local Video Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-video-record.html)
+- [Local Video Record](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-video-record.html)
   - 로컬 사용자 비디오 녹음하고 저장하기
-- [Remote Audio Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/remote-audio-record.html)
+- [Remote Audio Record](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/remote-audio-record.html)
   - 리모트 사용자 오디오 녹음하고 저장하기
-- [Remote Video Record](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/remote-video-record.html)
+- [Remote Video Record](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/remote-video-record.html)
   - 리모트 사용자 비디오 녹음하고 저장하기
 
 
 ### 유틸리티
 기타 기능, 개발 도구
 
-- [Check Peer Info](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/check-peer-info.html)
+- [Check Peer Info](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/check-peer-info.html)
   - 사용자의 정보 확인 하기
-- [Custom Media Quality](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/custom-media-quality.html)
+- [Custom Media Quality](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/custom-media-quality.html)
   - 영상/음성의 품질을 지정하기
-- [User Command](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/userCommand.html)
+- [User Command](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/userCommand.html)
   - PlayRTC 서비스가 제공하는 Web Socket기반의 API를 통해 상대방에게 명령을 전달하기
 
 
 ### 종합
-- [Full Features](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features.html)
+- [Full Features](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features.html)
   - 위 기능을 한페이지에서 사용하기
-- [IE Full Features](http://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features-ie.html)
+- [IE Full Features](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features-ie.html)
   - IE 브라우저 지원 Active X를 사용하여 전체 기능 사용하기
 
 COPYRIGHT (c) 2015 SK TELECOM CO. LTD. ALL RIGHTS RESERVED.
