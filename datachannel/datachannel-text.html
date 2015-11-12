@@ -101,10 +101,8 @@
 
     appCaller = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      userMedia: {
-        audio: false,
-        video: false
-      }
+      audio: false,
+      video: false
     });
 
     appCaller.on('connectChannel', function (channelId) {
@@ -138,10 +136,8 @@
 
     appCallee = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      userMedia: {
-        audio: false,
-        video: false
-      }
+      audio: false,
+      video: false
     });
 
     appCallee.on('addDataStream', function (pid, uid, dataChannel) {

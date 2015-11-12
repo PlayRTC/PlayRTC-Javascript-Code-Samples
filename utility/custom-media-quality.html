@@ -92,16 +92,12 @@
 		  app = new PlayRTC({
 		      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
 		      localMediaTarget: 'localVideo',
-		      userMedia: {
-		    	  audio: true,
-		    	  video: {
-		    		  mandatory: {
-		    			  minWidth: width,
-		    			  minHeight: height,
-		    			  minFrameRate: bitrate
-		    		  }
-		    	  }
-		      }
+          audio: true,
+          video: {
+            minWidth: width,
+            minHeight: height,
+            minFrameRate: bitrate
+          }
 		    });
 
       localVideo.setAttribute('width', width);
