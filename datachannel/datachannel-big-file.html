@@ -151,7 +151,7 @@
 
     appCallee.on('addDataStream', function (pid, uid, dataChannel) {
       dataChannel.on('message', function (message) {
-        if (message.type === 'file') {
+        if (message.type === 'binary') {
           alert('A file received. Please save the file.');
           file = message;
         }
