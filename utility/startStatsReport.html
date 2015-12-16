@@ -134,6 +134,7 @@
 
     appCaller.on('addRemoteStream', function (pid, uid, stream) {
       calleePeerId = pid;
+      return false;
     });
 
     createChannelButton.addEventListener('click', function (event) {
@@ -175,6 +176,7 @@
 
     appCallee.on('addRemoteStream', function (pid, uid, stream) {
       callerPeerId = pid;
+      return false;
     });
 
     connectChannelButton.addEventListener('click', function(event) {
