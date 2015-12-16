@@ -273,8 +273,8 @@
 
     app = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      localVideoTarget: localVideoEl,
-      remoteVideoTarget: remoteVideoEl
+      localMediaTarget: localVideoEl,
+      remoteMediaTarget: remoteVideoEl
     });
 
     getChannelList = function() {
@@ -570,7 +570,7 @@
       event.preventDefault();
 
       if (message) {
-        app.textSend(message);
+        app.sendText(message);
 
         chatParagraph = document.createElement('p');
         chatParagraph.classList.add('remote');
@@ -596,7 +596,7 @@
 	      if (!myFile) {
 	        return false;
 	      }
-	      app.fileSend(myFile);
+	      app.sendFile(myFile);
 	      selectFileInput.value = '';
       }
     }, false);
