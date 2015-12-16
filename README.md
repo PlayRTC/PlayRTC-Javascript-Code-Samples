@@ -65,6 +65,8 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
   - 사용자의 정보 확인 하기
 - [Custom Media Quality](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/custom-media-quality.html)
   - 영상/음성의 품질을 지정하기
+- [startStatsReport](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/startStatsReport.html)
+    - 각종 품질 지표의 측정 및 표현
 - [User Command](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/utility/userCommand.html)
   - PlayRTC 서비스가 제공하는 Web Socket기반의 API를 통해 상대방에게 명령을 전달하기
 
