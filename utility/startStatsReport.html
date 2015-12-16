@@ -45,6 +45,9 @@
           </button>
         </form>
 
+        <video class="remote-video center-block" id="callerRemoteVideo"></video>
+        <video class="local-video pull-right" id="callerLocalVideo"></video>
+
         <hr>
 
         <ul class="bg-info" id="callerPeerInfo">
@@ -77,6 +80,9 @@
             <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> Connect Channel
           </button>
         </form>
+
+        <video class="remote-video center-block" id="calleeRemoteVideo"></video>
+        <video class="local-video pull-right" id="calleeLocalVideo"></video>
 
         <hr>
 
@@ -118,10 +124,8 @@
 
     appCaller = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      userMedia: {
-        audio: true,
-        video: true
-      }
+      localMediaTarget: 'callerLocalVideo',
+      remoteMediaTarget: 'callerRemoteVideo'
     });
 
     appCaller.on('connectChannel', function (channelId) {
@@ -165,17 +169,15 @@
 
     appCallee = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      userMedia: {
-        audio: true,
-        video: true
-      }
+      localMediaTarget: 'calleeLocalVideo',
+      remoteMediaTarget: 'calleeRemoteVideo'
     });
 
     appCallee.on('addRemoteStream', function (pid, uid, stream) {
       callerPeerId = pid;
     });
 
-    connectChannelButton.addEventListener('click', function (event) {
+    connectChannelButton.addEventListener('click', function(event) {
       var channelId = connectChannelIdInput.value;
 
       event.preventDefault();
