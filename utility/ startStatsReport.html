@@ -47,10 +47,20 @@
 
         <hr>
 
-        <p class="bg-info" id="callerPeerInfo">Stats</p>
+        <ul class="bg-info" id="callerPeerInfo">
+          <li>callee Video width = <strong id="calleeWidth"></strong></li>
+          <li>callee Video height = <strong id="calleeHeight"></strong></li>
+          <li>callee bitrate = <strong id="calleeBitrate"></strong></li>
+          <li>rttRating = <strong id="rttRating1"></strong></li>
+          <li>fractionRating = <strong id="fractionRating1"></strong></li>
+        </ul>
         <form class="form-inline" id="callerPeerInfo">
           <button class="btn btn-default" id="startCallerStatsReport">
-            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Stats
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Stats Start
+          </button>
+
+          <button class="btn btn-default" id="stopCallerStatsReport">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Stats Stop
           </button>
         </form>
       </div>
@@ -70,10 +80,21 @@
 
         <hr>
 
-        <p class="bg-info" id="calleePeerInfo">Stats</p>
+        <ul class="bg-info" id="calleePeerInfo">
+         <li>caller Video width = <strong id="callerWidth"></strong></li>
+          <li>caller Video height = <strong id="callerHeight"></strong></li>
+          <li>caller bitrate = <strong id="callerBitrate"></strong></li>
+          <li>rttRating = <strong id="rttRating2"></strong></li>
+          <li>fractionRating = <strong id="fractionRating2"></strong></li>
+        </ul>
+
         <form class="form-inline">
           <button class="btn btn-default" id="startCalleeStatsReport">
-            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Stats
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Stats Start
+          </button>
+
+          <button class="btn btn-default" id="stopCalleeStatsReport">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Stats Stop
           </button>
         </form>
       </div>
@@ -90,14 +111,16 @@
 
     var createChannelButton = document.querySelector('#createChannel');
     var createChannelIdInput = document.querySelector('#createChannelId');
-    var checkPeerCallerButton = document.querySelector('#checkPeerCaller');
+    var startCallerStatsReportButton = document.querySelector('#startCallerStatsReport');
+    var stopCallerStatsReportButton = document.querySelector('#stopCallerStatsReport');
     var appCaller;
+    var calleePeerId;
 
     appCaller = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
       userMedia: {
-        audio: false,
-        video: false
+        audio: true,
+        video: true
       }
     });
 
@@ -105,19 +128,29 @@
       createChannelIdInput.value = channelId;
     });
 
+    appCaller.on('addRemoteStream', function (pid, uid, stream) {
+      calleePeerId = pid;
+    });
+
     createChannelButton.addEventListener('click', function (event) {
       event.preventDefault();
       appCaller.createChannel();
     }, false);
 
-    checkPeerCallerButton.addEventListener('click', function (event) {
-      var channelId = appCaller.getChannelId();
-      var pid = appCaller.getPeerId();
-
+    startCallerStatsReportButton.addEventListener('click', function (event) {
       event.preventDefault();
-      appCaller.getPeer(channelId, pid, function (peer) {
-      	document.querySelector('#startCallerStatsReport').innerHTML = JSON.stringify(peer);
+      appCaller.startStatsReport(calleePeerId, 3000, function(report){
+          document.getElementById("calleeWidth").innerHTML = report.remoteFrameWidth;
+          document.getElementById("calleeHeight").innerHTML = report.remoteFrameHeight;
+          document.getElementById("calleeBitrate").innerHTML = report.remoteFrameRate;
+          document.getElementById("rttRating1").innerHTML = report.rttRating;
+          document.getElementById("fractionRating1").innerHTML = report.fractionRating;
       });
+    }, false);
+
+    stopCallerStatsReportButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      appCaller.stopStatsReport(calleePeerId);
     }, false);
   </script>
   <script>
@@ -125,15 +158,21 @@
 
     var connectChannelIdInput = document.querySelector('#connectChannelId');
     var connectChannelButton = document.querySelector('#connectChannel');
-    var checkPeerCalleeButton = document.querySelector('#checkPeerCallee');
+    var startCalleeStatsReportButton = document.querySelector('#startCalleeStatsReport');
+    var stopCalleeStatsReportButton = document.querySelector('#stopCalleeStatsReport');
     var appCallee;
+    var callerPeerId;
 
     appCallee = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
       userMedia: {
-        audio: false,
-        video: false
+        audio: true,
+        video: true
       }
+    });
+
+    appCallee.on('addRemoteStream', function (pid, uid, stream) {
+      callerPeerId = pid;
     });
 
     connectChannelButton.addEventListener('click', function (event) {
@@ -146,14 +185,20 @@
       appCallee.connectChannel(channelId);
     }, false);
 
-    checkPeerCalleeButton.addEventListener('click', function (event) {
-      var channelId = appCallee.getChannelId();
-      var pid = appCallee.getPeerId();
-
+    startCalleeStatsReportButton.addEventListener('click', function (event) {
       event.preventDefault();
-      appCallee.getPeer(channelId, pid, function (peer) {
-      	document.querySelector('#startCalleeStatsReport').innerHTML = JSON.stringify(peer);
+      appCallee.startStatsReport(callerPeerId, 3000, function(report){
+          document.getElementById("callerWidth").innerHTML = report.remoteFrameWidth;
+          document.getElementById("callerHeight").innerHTML = report.remoteFrameHeight;
+          document.getElementById("callerBitrate").innerHTML = report.remoteFrameRate;
+          document.getElementById("rttRating2").innerHTML = report.rttRating;
+          document.getElementById("fractionRating2").innerHTML = report.fractionRating;
       });
+    }, false);
+
+    stopCalleeStatsReportButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      appCallee.stopStatsReport(callerPeerId);
     }, false);
   </script>
 </body>
