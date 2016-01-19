@@ -120,7 +120,7 @@
       /*localMediaTarget: "callerLocalVideo",
       remoteMediaTarget: "callerRemoteVideo",*/
       remoteMediaTarget: "remoteAudio",
-      ring : true,
+      ring : false,
       video : false
     });
 
@@ -141,7 +141,7 @@
          }
      });
 
-
+/*
      setInterval(function() {
        if (Test) {
          appCaller.getMedia().record("audio");
@@ -159,9 +159,16 @@
      }, 1500);
 
      appCaller.on("stateChange", function(state, peerid, userid){
-       //if (state == "CONNECTED") Test = true;
-       //if (state == "CLOSED") Record(); //크롬은 이벤트가 먹지 않는 것 같음
+       if (state == "CONNECTED") Test = true;
+       if (state == "CLOSED") Record(); //크롬은 이벤트가 먹지 않는 것 같음
      });
+*/
+
+    appCaller.on("addRemoteStream", function(peerid, userid){
+      appCaller.getMedia().record("audio");
+      appCaller.getPeerById(peerid).record("audio");
+    });
+
 
      function Record() {
        var localAudio = new Date() + "_Local.wav";
