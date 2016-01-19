@@ -120,7 +120,7 @@
       /*localMediaTarget: "callerLocalVideo",
       remoteMediaTarget: "callerRemoteVideo",*/
       remoteMediaTarget: "remoteAudio",
-      ring : true,
+      ring : false,
       video : false
     });
 
@@ -133,13 +133,13 @@
     });*/
 
     appCaller.on("ring", function(peerid, userid){
-		     if(window.confirm("수락하시겠습니까?")){
-		         appCaller.accept(peerid); //참여자 수락
-		     }
-		     else{
-		         appCaller.reject(peerid); //참여자 거절
-		     }
-		 });
+         if(window.confirm("수락하시겠습니까?")){
+             appCaller.accept(peerid); //참여자 수락
+         }
+         else{
+             appCaller.reject(peerid); //참여자 거절
+         }
+     });
 
 
      setInterval(function() {
@@ -159,8 +159,8 @@
      }, 1500);
 
      appCaller.on("stateChange", function(state, peerid, userid){
-       if (state == "CONNECTED") Test = true;
-       if (state == "CLOSED") Record(); //크롬은 이벤트가 먹지 않는 것 같음
+       //if (state == "CONNECTED") Test = true;
+       //if (state == "CLOSED") Record(); //크롬은 이벤트가 먹지 않는 것 같음
      });
 
      function Record() {
@@ -260,8 +260,8 @@
     });
 
     appCallee.on("reject", function(peerid, userid){
-		     alert("Hi~ You're Reject!!")
-		 });
+         alert("Hi~ You're Reject!!")
+     });
 
     connectChannelButton.addEventListener('click', function(e) {
       e.preventDefault();
