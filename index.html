@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Jmpsystems - JMPCall</title>
+  <meta charset="utf-8">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .local-video {
+      width: 80px;
+      height: 60px;
+      z-index: 10;
+      position: relative;
+      top: -100px;
+      right: 30px;
+    }
+
+    .remote-video {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 320px;
+      height: 240px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-12">
+        <h1 class="page-header">JMPCall</h1>
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="h3">Jmpsystems</h2>
+        <h3 class="h4">Create and Connect Channel</h3>
+        <form class="form-inline">
+          <div class="form-group">
+            <label class="sr-only" for="createChannelId">Channel Id</label>
+            <input class="form-control" type="text" id="createChannelId" placeholder="Create and connect the channel." value="" readonly>
+          </div>
+          <br/><br/>
+          <button class="btn btn-default" id="createChannel">
+            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Create Channel
+          </button>
+          <button class="btn btn-default" id="disconnectChannel">
+            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Disconnect Channel
+          </button>
+        </form>
+
+        <audio id="remoteAudio"></audio>
+        <!--<video class="remote-video center-block" id="callerRemoteVideo"></video>
+        <video class="local-video pull-right" id="callerLocalVideo" muted></video>-->
+
+      </div>
+
+      <!--<div class="col-md-6">
+        <h2 class="h3">Callee</h2>
+        <h3 class="h4">Connect Channel</h3>
+        <form class="form-inline">
+          <div class="form-group">
+            <label class="sr-only" for="connectChannelId">Channel Id</label>
+            <input class="form-control" type="text" id="connectChannelId" placeholder="Enter the channel id." value="">
+          </div>
+          <button class="btn btn-default" id="connectChannel">
+            <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> Connect Channel
+          </button>
+        </form>
+
+        <video class="remote-video center-block" id="calleeRemoteVideo"></video>
+        <video class="local-video pull-right" id="calleeLocalVideo"></video>
+
+      </div>-->
+
+    </div>
+  </div>
+
+  <br/><br/><br/>
+  <button class="btn btn-default" id="record">Record</button>
+  <button class="btn btn-default" id="recordStop">Record Stop</button>
+  &nbsp;
+  <button class="btn btn-default" id="exportLog">Export Log</button>
+  <br/><br/>
+  <button class="btn btn-default" id="muteTrue">Mute True</button>
+  <button class="btn btn-default" id="muteFalse">Mute False</button>
+
+
+  <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
+  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+
+  <!-- KMS -->
+  <!--<script src="http://www.playrtc.com/sdk/js/playrtc.js"></script>-->
+  <script src="https://www.playrtc.com/sdk/js/playrtc.js"></script>
+  <script src="js/playrtc-debug-view.js"></script>
+  <script src="js/jquery-2.1.4.min.js"></script>
+
+  <script>
+    'use strict';
+
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelId = document.querySelector('#createChannelId');
+    var appCaller;
+
+    var recordButton = document.querySelector("#record");
+    var recordStopButton = document.querySelector('#recordStop');
+    var exportLogButton = document.querySelector('#exportLog');
+    var disconnectChannelButton = document.querySelector('#disconnectChannel');
+
+    var muteTrueButton = document.querySelector('#muteTrue');
+    var muteFalseButton = document.querySelector('#muteFalse');
+
+    var peer;
+    var myPeerId;
+
+    var Test = false;
+
+    appCaller = new PlayRTC({
+      projectKey: "2b7285fc-dd70-4483-b267-93a2f2d4ec75",
+      /*localMediaTarget: "callerLocalVideo",
+      remoteMediaTarget: "callerRemoteVideo",*/
+      remoteMediaTarget: "remoteAudio",
+      ring : true,
+      video : false
+    });
+
+    appCaller.on('connectChannel', function(channelId) {
+      createChannelId.value = channelId;
+    });
+
+    /*appCaller.on('otherDisconnectChannel', function(peerid, userid) {
+      console.log("OTHER DISCONNECT CHANNEL!!!!!!!!!!!!!!!!!!!!!!");
+    });*/
+
+    appCaller.on("ring", function(peerid, userid){
+		     if(window.confirm("수락하시겠습니까?")){
+		         appCaller.accept(peerid); //참여자 수락
+		     }
+		     else{
+		         appCaller.reject(peerid); //참여자 거절
+		     }
+		 });
+
+
+     setInterval(function() {
+       if (Test) {
+         appCaller.getMedia().record("audio");
+
+         var peers = new Array();
+
+         peers = appCaller.getAllPeer();
+
+         peer = appCaller.getPeerByPeerId(peers[0].id);
+         peer.getMedia().record("audio");
+
+         myPeerId = peers[0].id;
+         Test = false
+       }
+     }, 1500);
+
+     appCaller.on("stateChange", function(state, peerid, userid){
+       if (state == "CONNECTED") Test = true;
+       if (state == "CLOSED") Record(); //크롬은 이벤트가 먹지 않는 것 같음
+     });
+
+     function Record() {
+       var localAudio = new Date() + "_Local.wav";
+       var remoteAudio = new Date() + "_Remote.wav";
+
+       appCaller.getMedia().recordStop(function(blob) {
+         PlayRTC.utils.fileDownload(blob, localAudio);
+       });
+
+       peer.getMedia().recordStop(function(blob) {
+         PlayRTC.utils.fileDownload(blob, remoteAudio);
+       });
+     }
+
+     /*recordButton.addEventListener('click', function(e) {
+       appCaller.getMedia().record("audio");
+
+       var peers = new Array();
+
+       peers = appCaller.getAllPeer();
+
+       peer = appCaller.getPeerByPeerId(peers[0].id);
+       peer.getMedia().record("audio");
+     });
+
+     recordStopButton.addEventListener('click', function(e) {
+       appCaller.getMedia().recordStop(function(blob) {
+         PlayRTC.utils.fileDownload(blob, "localAudio.wav");
+       });
+
+       peer.getMedia().recordStop(function(blob) {
+         PlayRTC.utils.fileDownload(blob, "remoteAudio.wav");
+       });
+     });*/
+
+
+     muteTrueButton.addEventListener('click', function(e) {
+       //document.getElementById("callerLocalVideo").muted = true;
+       appCaller.getMedia().audioMute(true);
+       console.log("True");
+     })
+
+     muteFalseButton.addEventListener('click', function(e) {
+       //document.getElementById("callerLocalVideo").muted = false;
+       appCaller.getMedia().audioMute(false);
+       console.log("False");
+     })
+
+
+    exportLogButton.addEventListener('click', function(e) {
+       PlayRTC.utils.exportLog();
+     })
+
+     disconnectChannelButton.addEventListener('click', function(e) {
+       appCaller.disconnectChannel(myPeerId);
+
+       var localAudio = new Date() + "_Local.wav";
+       var remoteAudio = new Date() + "_Remote.wav";
+
+       appCaller.getMedia().recordStop(function(blob) {
+         PlayRTC.utils.fileDownload(blob, localAudio);
+       });
+
+       peer.getMedia().recordStop(function(blob) {
+         PlayRTC.utils.fileDownload(blob, remoteAudio);
+       });
+     });
+
+
+    //PlayRTC.utils.debugViewShow();
+
+
+    createChannelButton.addEventListener('click', function(e) {
+      var options = {
+        channel : {
+          channelName : "english"
+        }
+      }
+      e.preventDefault();
+      //appCaller.createChannel();
+      appCaller.createChannel(options);
+    }, false);
+  </script>
+  <!--<script>
+    'use strict';
+
+    var connectChannelId = document.querySelector('#connectChannelId');
+    var connectChannelButton = document.querySelector('#connectChannel');
+    var appCallee;
+
+    appCallee = new PlayRTC({
+      projectKey: "2b7285fc-dd70-4483-b267-93a2f2d4ec75",
+      /*localMediaTarget: "calleeLocalVideo",
+      remoteMediaTarget: "calleeRemoteVideo"*/
+      video: false
+    });
+
+    appCallee.on("reject", function(peerid, userid){
+		     alert("Hi~ You're Reject!!")
+		 });
+
+    connectChannelButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      var channelId = connectChannelId.value;
+      if (!channelId) { return };
+      appCallee.connectChannel(channelId);
+    }, false);
+
+    /*for ( var i = 0, len = localStorage.length; i < len; ++i ) {
+      console.log( localStorage.key( i ) + " " + localStorage.getItem( localStorage.key( i ) ) );
+    }*/
+  </script>-->
+</body>
+
+</html>
