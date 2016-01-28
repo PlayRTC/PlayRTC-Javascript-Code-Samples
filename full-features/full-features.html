@@ -122,19 +122,6 @@
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
               </button>
             </div>
-
-            <div class="btn-group" role="group" aria-label="...">
-              <button class="btn btn-default btn-sm" id="startRemoteVoiceRecord">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Record
-              </button>
-              <button class="btn btn-default btn-sm" id="stopRemoteVoiceRecord">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
-              </button>
-              <button class="btn btn-default btn-sm" id="saveRemoteVoiceRecord">
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
-              </button>
-            </div>
-            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
           </div>
         </div>
 
@@ -160,21 +147,6 @@
                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
               </button>
               <button class="btn btn-default btn-sm" id="saveLocalVideoRecord">
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
-              </button>
-            </div>
-
-            <br>
-
-            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
-            <div class="btn-group" role="group" aria-label="...">
-              <button class="btn btn-default btn-sm" id="startLocalVoiceRecord">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Record
-              </button>
-              <button class="btn btn-default btn-sm" id="stopLocalVoiceRecord">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
-              </button>
-              <button class="btn btn-default btn-sm" id="saveLocalVoiceRecord">
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Save
               </button>
             </div>
@@ -234,15 +206,9 @@
     var startRemoteVideoRecordButton = document.querySelector('#startRemoteVideoRecord');
     var stopRemoteVideoRecordButton = document.querySelector('#stopRemoteVideoRecord');
     var saveRemoteVideoRecordButton = document.querySelector('#saveRemoteVideoRecord');
-    var startRemoteVoiceRecordButton = document.querySelector('#startRemoteVoiceRecord');
-    var stopRemoteVoiceRecordButton = document.querySelector('#startRemoteVoiceRecord');
-    var saveRemoteVoiceRecordButton = document.querySelector('#saveRemoteVoiceRecord');
     var startLocalVideoRecordButton = document.querySelector('#startLocalVideoRecord');
     var stopLocalVideoRecordButton = document.querySelector('#stopLocalVideoRecord');
     var saveLocalVideoRecordButton = document.querySelector('#saveLocalVideoRecord');
-    var startLocalVoiceRecordButton = document.querySelector('#startLocalVoiceRecord');
-    var stopLocalVoiceRecordButton = document.querySelector('#stopLocalVoiceRecord');
-    var saveLocalVoiceRecordButton = document.querySelector('#saveLocalVoiceRecord');
     var chattingTimeline = document.querySelector('#timeline');
     var sendMessageInput = document.querySelector('#sendMessage');
     var selectFileInput = document.querySelector('#selectFile');
@@ -396,7 +362,7 @@
       event.preventDefault();
 
       if (hasPeers) {
-        firstPeerMedia.record('video');
+        firstPeerMedia.record();
       }
     }, false);
 
@@ -421,47 +387,13 @@
       }
     }, false);
 
-    startRemoteVoiceRecordButton.addEventListener('click', function (event) {
-      var peers = app.getAllPeer();
-      var hasPeers = peers.length > 0;
-      var firstPeerMedia = peers[0].getMedia();
-
-      event.preventDefault();
-
-      if (hasPeers) {
-        firstPeerMedia.record('audio');
-      }
-    }, false);
-
-    stopRemoteVoiceRecordButton.addEventListener('click', function (event) {
-      var peers = app.getAllPeer();
-      var hasPeers = peers.length > 0;
-      var firstPeerMedia = peers[0].getMedia();
-
-      event.preventDefault();
-
-      if (hasPeers) {
-        firstPeerMedia.recordStop(function (blob) {
-          recordedRemoteVoiceBlob = blob;
-        });
-      }
-    }, false);
-
-    saveRemoteVoiceRecordButton.addEventListener('click', function (event) {
-      event.preventDefault();
-
-      if (recordedRemoteVoiceBlob) {
-        PlayRTC.utils.fileDownload(recordedRemoteVoiceBlob, 'remote-voice.wav');
-      }
-    }, false);
-
     startLocalVideoRecordButton.addEventListener('click', function (event) {
       var media = app.getMedia();
 
       event.preventDefault();
 
       if (media) {
-        media.record('video');
+        media.record();
       }
     }, false);
 
@@ -480,36 +412,6 @@
       event.preventDefault();
       if (recordedLocalVideoBlob) {
         PlayRTC.utils.fileDownload(recordedLocalVideoBlob, 'local-video.webm');
-      }
-    }, false);
-
-    startLocalVoiceRecordButton.addEventListener('click', function (event) {
-      var media = app.getMedia();
-
-      event.preventDefault();
-
-      if (media) {
-        media.record('audio');
-      }
-    }, false);
-
-    stopLocalVoiceRecordButton.addEventListener('click', function (event) {
-      var media = app.getMedia();
-
-      event.preventDefault();
-
-      if (media) {
-        media.recordStop(function (blob) {
-          recordedLocalVoiceBlob = blob;
-        });
-      }
-    }, false);
-
-    saveLocalVoiceRecordButton.addEventListener('click', function (event) {
-      event.preventDefault();
-
-      if (recordedLocalVoiceBlob) {
-        PlayRTC.utils.fileDownload(recordedLocalVoiceBlob, 'local-voice.wav');
       }
     }, false);
 

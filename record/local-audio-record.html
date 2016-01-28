@@ -37,7 +37,7 @@
       </div>
 
       <div class="col-md-12">
-        <video class="local-video center-block" id="localVideo"></video>
+        <audio class="local-video center-block" id="localVideo"></audio>
       </div>
 
       <div class="col-md-12">
@@ -76,7 +76,8 @@
 
     app = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      localMediaTarget: 'localVideo'
+      localMediaTarget: 'localVideo',
+      video: false
     });
 
     app.on('connectChannel', function (channelId) {
@@ -89,7 +90,7 @@
     }, false);
 
     startRecordButton.addEventListener('click', function (event) {
-      app.getMedia().record('audio');
+      app.getMedia().record();
     }, false);
 
     stopRecordButton.addEventListener('click', function (event) {

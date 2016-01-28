@@ -45,8 +45,8 @@
           </button>
         </form>
 
-        <video class="remote-video center-block" id="callerRemoteVideo"></video>
-        <video class="local-video pull-right" id="callerLocalVideo"></video>
+        <audio class="remote-video center-block" id="callerRemoteVideo"></audio>
+        <audio class="local-video pull-right" id="callerLocalVideo"></audio>
 
       </div>
 
@@ -63,8 +63,8 @@
           </button>
         </form>
 
-        <video class="remote-video center-block" id="calleeRemoteVideo"></video>
-        <video class="local-video pull-right" id="calleeLocalVideo"></video>
+        <audio class="remote-video center-block" id="calleeRemoteVideo"></audio>
+        <audio class="local-video pull-right" id="calleeLocalVideo"></audio>
         <div class="text-center">
           <div class="btn-group" role="group" aria-label="...">
             <button class="btn btn-default" id="startRecord">
@@ -97,7 +97,8 @@
     appCaller = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
       localMediaTarget: 'callerLocalVideo',
-      remoteMediaTarget: 'callerRemoteVideo'
+      remoteMediaTarget: 'callerRemoteVideo',
+      video: false
     });
 
     appCaller.on('connectChannel', function (channelId) {
@@ -123,7 +124,8 @@
     appCallee = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
       localVideoTarget: 'calleeLocalVideo',
-      remoteVideoTarget: 'calleeRemoteVideo'
+      remoteVideoTarget: 'calleeRemoteVideo',
+      video: false
     });
 
     connectChannelButton.addEventListener('click', function (event) {
@@ -139,7 +141,7 @@
     startRecordButton.addEventListener('click', function (event) {
     	var peers = appCallee.getAllPeer();
 
-      peers[0].getMedia().record('audio');
+      peers[0].getMedia().record();
   	}, false);
 
     stopRecordButton.addEventListener('click', function (event) {
