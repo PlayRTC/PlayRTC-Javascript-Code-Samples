@@ -74,7 +74,5 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 ### 종합
 - [Full Features](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features.html)
   - 위 기능을 한페이지에서 사용하기
-- [IE Full Features](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features-ie.html)
-  - IE 브라우저 지원 Active X를 사용하여 전체 기능 사용하기
 
 COPYRIGHT (c) 2015 SK TELECOM CO. LTD. ALL RIGHTS RESERVED.
