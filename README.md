@@ -47,7 +47,7 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 영상, 음성의 녹음/녹화
 
 - 주의
-  - 현재 크롬에서 녹화 기능의 완벽하게 지원되지 않고 있으며, 이 테스트를 위해서는 파이어 폭스를 사용할 것
+  - 현재 크롬(v47)에서 녹화 기능은 지원되지 않고 있으며, 이 테스트를 위해서는 파이어 폭스를 사용할 것
 - [Local Audio Record](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-audio-record.html)
   - 로컬 사용자 오디오 녹음하고 저장하기
 - [Local Video Record](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/record/local-video-record.html)
