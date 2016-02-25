@@ -42,6 +42,12 @@
         font-size: 0.8em;
       }
     }
+
+    .form-group{
+      border-bottom: 1px solid #eee;
+      padding: 5px;
+      width: 100%;
+    }
   </style>
 </head>
 
@@ -67,6 +73,9 @@
       <div class="col-md-2">
 
         <h2 class="h3">Profile/Config</h2>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+          Config Setting
+        </button>
         <h3 class="h4">User Id</h3>
         <form>
           <div class="form-group">
@@ -188,31 +197,115 @@
     </div>
   </div>
 
-  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Launch demo modal
-</button>
-
   <!-- Modal -->
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+          <h4 class="modal-title" id="myModalLabel">Config</h4>
         </div>
         <div class="modal-body">
-          asdfasdfasdfasdfadsfads
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="turnIp">TURN</label><br/>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="optionsRadios" value="nagTurn" checked> 일반
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="optionsRadios" value="userTurn"> 사용자 설정
+                </label>
+              </div>
+            </div>
+            <div class="form-group" style="display: none;" id="userTurnSetting">
+              <input type="text" class="form-control" id="turnIp" placeholder="127.0.0.1:8888">
+              <input type="text" class="form-control" id="turnUsername" placeholder="아이디를 입력하세요">
+              <input type="text" class="form-control" id="turnPwd" placeholder="비밀번호를 입력하세요">
+            </div>
+            <div class="form-group">
+              <label for="turnIp">Resolution</label><br/>
+              Min <input type="text" class="form-control" value="640" id="minWidth"> X <input type="text" class="form-control" value="480" id="minHeight">
+              <br/>
+              Max<input type="text" class="form-control" value="640" id="maxWidth"> X <input type="text" class="form-control" value="480" id="maxHeight">
+            </div>
+            <div class="form-group">
+              <label for="turnIp">Bitrate</label><br/>
+              Min <input type="text" class="form-control" value="20" id="minBitrate">
+              <br/>
+              Max<input type="text" class="form-control" value="30" id="maxBitrate">
+            </div>
+            <div class="form-group">
+              <label for="turnIp">Bandwidth</label><br/>
+              Video <input type="text" class="form-control" value="2500" id="videoBandwidth"> Data <input type="text" class="form-control" value="1638400" id="dataBandwidth">
+            </div>
+          </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-primary" id="configSave">Save changes</button>
         </div>
       </div>
     </div>
   </div>
 
+
+
   <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  <script>
+    var g_iceServers = null;
+    var g_video_constrains = {
+      minWidth: 640,
+      minHeight: 480,
+      maxWidth: 640,
+      maxHeight: 480
+    };
+    var g_video_bandwidth = 2500;
+    var g_data_bandwidth = 1638400;
+    $(':radio[name="optionsRadios"]').change(function(){
+      if(this.value === "nagTurn"){
+        $("#userTurnSetting").hide();
+      } else{
+        $("#userTurnSetting").show();
+      }
+    });
+
+    $("#configSave").click(function(){
+        var iceServers_value = $(':radio[name="optionsRadios"]:checked').val();
+
+        if(iceServers_value === "nagTurn"){
+          g_iceServers = null;
+        } else{
+          var ip = $("#turnIp").val();
+          var username = $("#turnUsername").val();
+          var pwd = $("#turnPwd").val();
+
+          if(!ip || !username || !pwd){
+            alert("must set turn!!");
+            return;
+          }
+
+          g_iceServers = [{
+            url: "turn:" + ip,
+            credential: pwd,
+            username: username
+          }];
+        }
+
+        g_video_constrains.minWidth = parseInt($("#minWidth").val());
+        g_video_constrains.minHeight = parseInt($("#minHeight").val());
+        g_video_constrains.maxWidth = parseInt($("#maxWidth").val());
+        g_video_constrains.maxHeight = parseInt($("#maxHeight").val());
+
+        g_video_bandwidth = parseInt($("#videoBandwidth").val());
+        g_data_bandwidth = parseInt($("#dataBandwidth").val());
+    });
+    
+  </script>
 
   <script src="//www.playrtc.com/sdk/js/playrtc.js"></script>
   <script>
@@ -247,14 +340,15 @@
     var userId;
     var app;
 
-    app = new PlayRTC({
+    var channelListApp = new PlayRTC({
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
-      localMediaTarget: 'localVideo',
-      remoteMediaTarget: 'remoteVideo'
+      video: false,
+      audio: false
     });
 
-    getChannelList = function () {
-      app.getChannelList(function (result) {
+
+    function getChannelList() {
+      channelListApp.getChannelList(function (result) {
         var channels = result.channels;
         var channelsLength = channels.length;
 
@@ -282,62 +376,78 @@
 
     getChannelList();
 
-    app.on('connectChannel', function (channelId) {
-      createChannelIdInput.value = channelId;
-      getChannelList();
-    });
 
-    app.on('disconnectChannel', function (channelId) {
-      createChannelIdInput.value = '';
-
-      while (chattingTimeline.hasChildNodes()) {
-        chattingTimeline.removeChild(chattingTimeline.firstChild);
-      }
-
-      getChannelList();
-    });
-
-    app.on('otherDisconnectChannel', function (channelId) {
-      remoteVideo.src = '';
-
-      while (chattingTimeline.hasChildNodes()) {
-        chattingTimeline.removeChild(chattingTimeline.firstChild);
-      }
-
-      getChannelList();
-    });
-
-    app.on('addDataStream', function (pid, uid, dataChannel) {
-      dataChannel.on('message', function (message) {
-        var chatParagraph;
-
-        if (message.type === 'text') {
-          chatParagraph = document.createElement('p');
-          chatParagraph.classList.add('local');
-          chatParagraph.textContent = message.data;
-
-          chattingTimeline.appendChild(chatParagraph);
-        } else if (message.type === 'file') {
-          PlayRTC.utils.fileDownload(message.blob, message.fileName);
-          sendFileToRemoteBar.style.width = '0px';
+    function rtcStart(){
+      debugger;
+      app = new PlayRTC({
+        projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+        localMediaTarget: 'localVideo',
+        remoteMediaTarget: 'remoteVideo',
+        iceServers: g_iceServers,
+        video: g_video_constrains,
+        bandwidth: {
+          video: g_video_bandwidth,
+          data: g_data_bandwidth
         }
       });
 
-      dataChannel.on('progress', function (message) {
-        var width = sendFileToRemoteBarWrapper.clientWidth;
-        var progressbar = (width / message.fragCount) * (message.fragIndex + 1);
+      app.on('connectChannel', function (channelId) {
+        createChannelIdInput.value = channelId;
+        getChannelList();
+      });
 
-        if (message.totalSize === message.fragSize) {
-          return;
+      app.on('disconnectChannel', function (channelId) {
+        createChannelIdInput.value = '';
+
+        while (chattingTimeline.hasChildNodes()) {
+          chattingTimeline.removeChild(chattingTimeline.firstChild);
         }
 
-        sendFileToRemoteBar.style.width = progressbar + 'px';
+        getChannelList();
       });
 
-      dataChannel.on('error', function (event) {
-        alert('ERROR. See the log.');
+      app.on('otherDisconnectChannel', function (channelId) {
+        remoteVideo.src = '';
+
+        while (chattingTimeline.hasChildNodes()) {
+          chattingTimeline.removeChild(chattingTimeline.firstChild);
+        }
+
+        getChannelList();
       });
-    });
+
+      app.on('addDataStream', function (pid, uid, dataChannel) {
+        dataChannel.on('message', function (message) {
+          var chatParagraph;
+
+          if (message.type === 'text') {
+            chatParagraph = document.createElement('p');
+            chatParagraph.classList.add('local');
+            chatParagraph.textContent = message.data;
+
+            chattingTimeline.appendChild(chatParagraph);
+          } else if (message.type === 'file') {
+            PlayRTC.utils.fileDownload(message.blob, message.fileName);
+            sendFileToRemoteBar.style.width = '0px';
+          }
+        });
+
+        dataChannel.on('progress', function (message) {
+          var width = sendFileToRemoteBarWrapper.clientWidth;
+          var progressbar = (width / message.fragCount) * (message.fragIndex + 1);
+
+          if (message.totalSize === message.fragSize) {
+            return;
+          }
+
+          sendFileToRemoteBar.style.width = progressbar + 'px';
+        });
+
+        dataChannel.on('error', function (event) {
+          alert('ERROR. See the log.');
+        });
+      });
+    }
 
     refreshChannelButton.addEventListener('click', function (event) {
       event.preventDefault();
@@ -345,6 +455,7 @@
     }, false);
 
     channelList.addEventListener('click', function (event) {
+      rtcStart();
       var channelId = event.target.dataset.channelid;
 
       userId = userIdInput.value;
@@ -358,6 +469,7 @@
     }, false);
 
     createChannelButton.addEventListener('click', function (event) {
+      rtcStart();
       event.preventDefault();
 
       userId = userIdInput.value;
@@ -371,11 +483,17 @@
     }, false);
 
     disconnectChannelButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       event.preventDefault();
       app.disconnectChannel();
     }, false);
 
     startRemoteVideoRecordButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       var peers = app.getAllPeer();
       var hasPeers = peers.length > 0;
       var firstPeerMedia = peers[0].getMedia();
@@ -388,6 +506,9 @@
     }, false);
 
     stopRemoteVideoRecordButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       var peers = app.getAllPeer();
       var hasPeers = peers.length > 0;
       var firstPeerMedia = peers[0].getMedia();
@@ -402,6 +523,9 @@
     }, false);
 
     saveRemoteVideoRecordButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       event.preventDefault();
       if (recordedRemoteVideoBlob) {
         PlayRTC.utils.fileDownload(recordedRemoteVideoBlob, 'remote-video.webm');
@@ -409,6 +533,9 @@
     }, false);
 
     startLocalVideoRecordButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       var media = app.getMedia();
 
       event.preventDefault();
@@ -419,6 +546,9 @@
     }, false);
 
     stopLocalVideoRecordButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       var media = app.getMedia();
 
       event.preventDefault();
@@ -430,6 +560,9 @@
     }, false);
 
     saveLocalVideoRecordButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       event.preventDefault();
       if (recordedLocalVideoBlob) {
         PlayRTC.utils.fileDownload(recordedLocalVideoBlob, 'local-video.webm');
@@ -437,6 +570,9 @@
     }, false);
 
     sendTextButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       var chatParagraph;
       var message = sendMessageInput.value;
 
@@ -455,6 +591,9 @@
     }, false);
 
     sendFileButton.addEventListener('click', function (event) {
+      if(!app){
+        return;
+      }
       var myFile = selectFileInput.files[0];
 
       event.preventDefault();
