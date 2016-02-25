@@ -303,6 +303,8 @@
 
         g_video_bandwidth = parseInt($("#videoBandwidth").val());
         g_data_bandwidth = parseInt($("#dataBandwidth").val());
+
+        alert("save completed!!");
     });
     
   </script>
@@ -378,7 +380,6 @@
 
 
     function rtcStart(){
-      debugger;
       app = new PlayRTC({
         projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
         localMediaTarget: 'localVideo',
