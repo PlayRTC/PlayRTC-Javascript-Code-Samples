@@ -4729,6 +4729,7 @@ var Peer = utils.Extend(utils.Event, {
 		this.config.iceServers.push({
 			url: "stun4.l.google.com:19302"
 		});
+		/*
 		this.config.iceServers.push({
 			url: "stun.ekiga.net"
 		});
@@ -4756,6 +4757,7 @@ var Peer = utils.Extend(utils.Event, {
 		this.config.iceServers.push({
 			url: "stun.services.mozilla.com"
 		});
+*/
 
 		this.pc = new PeerConnection({
 			iceServers: this.config.iceServers
