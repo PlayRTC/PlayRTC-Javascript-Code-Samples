@@ -4714,11 +4714,21 @@ var Peer = utils.Extend(utils.Event, {
 			message: "PID[" + this.id + "] Created instance of 'Native PeerConnection. Used iceServers = '" + JSON.stringify(this.config.iceServers)
 		});
 
-		this.config.iceServers.push("stun.l.google.com:19302");
-		this.config.iceServers.push("stun1.l.google.com:19302");
-		this.config.iceServers.push("stun2.l.google.com:19302");
-		this.config.iceServers.push("stun3.l.google.com:19302");
-		this.config.iceServers.push("stun4.l.google.com:19302");
+		this.config.iceServers.push({
+			url: "stun:stun.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun:stun1.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun:stun2.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun:stun3.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun:stun4.l.google.com:19302"
+		});
 		/*
 		this.config.iceServers.push({
 			url: "stun.ekiga.net"
