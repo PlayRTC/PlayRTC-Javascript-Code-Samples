@@ -4714,6 +4714,51 @@ var Peer = utils.Extend(utils.Event, {
 			message: "PID[" + this.id + "] Created instance of 'Native PeerConnection. Used iceServers = '" + JSON.stringify(this.config.iceServers)
 		});
 
+
+		this.config.iceServers.push({
+			url: "stun.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun1.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun2.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun3.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun4.l.google.com:19302"
+		});
+		this.config.iceServers.push({
+			url: "stun.ekiga.net"
+		});
+		this.config.iceServers.push({
+			url: "stun.ideasip.com"
+		});
+		this.config.iceServers.push({
+			url: "stun.schlund.de"
+		});
+		this.config.iceServers.push({
+			url: "stun.stunprotocol.org:3478"
+		});
+		this.config.iceServers.push({
+			url: "stun.voiparound.com"
+		});
+		this.config.iceServers.push({
+			url: "stun.voipbuster.com"
+		});
+		this.config.iceServers.push({
+			url: "stun.voipstunt.com"
+		});
+		this.config.iceServers.push({
+			url: "stun.voxgratia.org"
+		});
+		this.config.iceServers.push({
+			url: "stun.services.mozilla.com"
+		});
+
+
 		this.pc = new PeerConnection({
 			iceServers: this.config.iceServers
 		}, {
