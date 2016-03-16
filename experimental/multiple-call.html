@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Media Stream Video - PlayRTC</title>
+  <meta charset="utf-8">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .my-video {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 320px;
+      height: 240px;
+    }
+
+    .guest-video {
+      width: 160px;
+      height: 120px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-12">
+        <h1 class="page-header">Media Stream Video - PlayRTC</h1>
+      </div>
+
+      <div class="col-md-6">
+        <h3 class="h4">Create and Connect Channel</h3>
+        <form class="form-inline">
+          <div class="form-group">
+            <label class="sr-only" for="createChannelId">Channel Id</label>
+            <input class="form-control" type="text" id="createChannelId" placeholder="Create and connect the channel." value="" readonly>
+          </div>
+          <button class="btn btn-default" id="createChannel">
+            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Create Channel
+          </button>
+        </form>
+
+        <video class="my-video center-block" id="myVideo"></video>
+
+      </div>
+
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6">
+            <h2 class="h5">Guest 01</h2>
+            <video class="guest-video center-block" id="guest01Video"></video>
+          </div>
+
+          <div class="col-md-6">
+            <h2 class="h5">Guest 02</h2>
+            <video class="guest-video center-block" id="guest02Video"></video>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <h2 class="h5">Guest 03</h2>
+            <video class="guest-video center-block" id="guest03Video"></video>
+          </div>
+
+          <div class="col-md-6">
+            <h2 class="h5">Guest 04</h2>
+            <video class="guest-video center-block" id="guest04Video"></video>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
+  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+
+  <script src="//www.playrtc.com/sdk/js/playrtc.js"></script>
+  <script>
+    'use strict';
+
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelIdInput = document.querySelector('#createChannelId');
+    var appCaller;
+
+    appCaller = new PlayRTC({
+      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      localMediaTarget: 'callerLocalVideo',
+      remoteMediaTarget: 'callerRemoteVideo'
+    });
+
+    appCaller.on('connectChannel', function(channelId) {
+      createChannelIdInput.value = channelId;
+    });
+
+    createChannelButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      appCaller.createChannel();
+    }, false);
+  </script>
+</body>
+
+</html>

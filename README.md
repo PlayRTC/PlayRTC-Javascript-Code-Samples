@@ -75,4 +75,10 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 - [Full Features](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features.html)
   - 위 기능을 한페이지에서 사용하기
 
+### 실험실
+실험적 기능 제공. 이 항목의 기능은 특정 상황에서 기능이 작동할 수 있으나, PlayRTC 팀에 의해 품질/기능 보증을 하지 않습니다.
+
+- [Multiple Call](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/experimental/multiple-call.html)
+- [Multiple Video Input](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/experimental/multiple-video-input.html)
+
 COPYRIGHT (c) 2015 SK TELECOM CO. LTD. ALL RIGHTS RESERVED.
