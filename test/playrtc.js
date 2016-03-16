@@ -4714,7 +4714,7 @@ var Peer = utils.Extend(utils.Event, {
 			message: "PID[" + this.id + "] Created instance of 'Native PeerConnection. Used iceServers = '" + JSON.stringify(this.config.iceServers)
 		});
 
-
+/*
 		this.config.iceServers.push({
 			url: "stun.l.google.com:19302"
 		});
@@ -4757,7 +4757,7 @@ var Peer = utils.Extend(utils.Event, {
 		this.config.iceServers.push({
 			url: "stun.services.mozilla.com"
 		});
-
+*/
 
 		this.pc = new PeerConnection({
 			iceServers: this.config.iceServers
