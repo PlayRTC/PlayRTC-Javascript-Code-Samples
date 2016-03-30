@@ -6,7 +6,7 @@
  * version: 2.2.13
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-03-18 14:33 
+ * Date: 2016-03-18 14:20 
  */
 
 (function(factory){
@@ -1238,11 +1238,6 @@ var PlayRTC = utils.Extend(utils.Event, {
 		this.channelServer = config.channelUrl;
 		this.nagServer = config.nagRestUrl;
 		this.fractionLost = config.fractionLost;
-		
-		if(window.location.protocol !== "https:"){
-			this.nagServer = this.nagServer.replace("https", "http");
-			this.nagServer = this.nagServer.replace("8071", "8070");
-		}
 
 		Logger.trace("cdm", {
 			klass: "PlayRTC",
@@ -2630,6 +2625,11 @@ var Call = utils.Extend(utils.Event, {
 			channelId: this.getChannelId(),
 			message: "Called requestTurn"
 		});
+		
+		if(window.location.protocol !== "https"){
+			this.playRtc.nagServer = this.playRtc.nagServer.replace("https", "http");
+			this.playRtc.nagServer = this.playRtc.nagServer.replace("8071", "8070");
+		}
 
 		var url = this.playRtc.nagServer + "/webrtcsignaling/v1/" + this.getToken() + "/turnserver?authToken=" + this.getNagToken();
 		request({

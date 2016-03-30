@@ -286,6 +286,29 @@
       getChannelList();
     });
 
+    app.on("stateChange", function(state, pid, uid){
+      if (state == "CONNECTED") {
+        app.getMedia().record();
+
+        var peers = app.getAllPeer();
+        var peer = app.getPeerByPeerId(peers[0].id);
+        peer.getMedia().record();
+
+        app.startStatsReport(pid, 1000, function(report) {
+
+        });
+      }
+      else if(state == "CLOSED"){
+        app.getMedia().recordStop(function(blob){
+          PlayRTC.utils.fileDownload(blob, "local.wav");
+        });
+
+        app.getPeerByPeerId(pid).getMedia().recordStop(function(blob){
+         PlayRTC.utils.fileDownload(blob, "remote.wav");
+        });
+      }
+    });
+
     app.on('addDataStream', function (pid, uid, dataChannel) {
       dataChannel.on('message', function (message) {
         var chatParagraph;
