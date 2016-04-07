@@ -296,7 +296,7 @@
           chatParagraph.textContent = message.data;
 
           chattingTimeline.appendChild(chatParagraph);
-        } else if (message.type === 'file') {
+        } else if (message.type === 'binary') {
           PlayRTC.utils.fileDownload(message.blob, message.fileName);
           sendFileToRemoteBar.style.width = '0px';
         }
