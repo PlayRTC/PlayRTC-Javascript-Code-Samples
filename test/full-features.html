@@ -242,6 +242,7 @@
     });
 
     app.on("stateChange", function(state, pid, uid){
+      /*
       if (state == "CONNECTED") {
         app.getMedia().record();
 
@@ -258,6 +259,7 @@
          PlayRTC.utils.fileDownload(blob, "remote.wav");
         });
       }
+      */
     });
 
     app.on('addDataStream', function (pid, uid, dataChannel) {

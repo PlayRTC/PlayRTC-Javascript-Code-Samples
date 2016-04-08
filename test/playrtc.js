@@ -3916,11 +3916,8 @@ var Peer = utils.Extend(utils.Event, {
 			
 			this._error("C4008", SDK_ERROR_CODE["C4008"]);
 		}, this), {
-			optional: [{"VoiceActivityDetection":false}],
-			mandatory: {
-				OfferToReceiveAudio: false, 
-				OfferToReceiveVideo: false
-			}
+				offerToReceiveAudio: false, 
+				offerToReceiveVideo: false
 		});
 	},
 	createAnswer: function(sdp){
@@ -3976,10 +3973,8 @@ var Peer = utils.Extend(utils.Event, {
 			
 			this._error("C4008", SDK_ERROR_CODE["C4008"]);
 		}, this), {
-			optional: [{"VoiceActivityDetection":false}],
-			mandatory: {
-				OfferToReceiveAudio: true, 
-				OfferToReceiveVideo: true
+				offerToReceiveAudio: false, 
+				offerToReceiveVideo: false
 			}
 		});
 	},
