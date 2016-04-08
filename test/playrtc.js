@@ -3976,7 +3976,7 @@ var Peer = utils.Extend(utils.Event, {
 				offerToReceiveAudio: false, 
 				offerToReceiveVideo: false
 			}
-		});
+		);
 	},
 	receiveAnwserSdp: function(sdp){
 		var pc = this.pc;
