@@ -6,7 +6,7 @@
  * version: 2.2.13
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-03-18 14:20 
+ * Date: 2016-04-08 13:24 
  */
 
 (function(factory){
@@ -104,8 +104,18 @@ function request(options){
 			}
 		}
 		else if (xhr.readyState === 4 && xhr.status !== 200) {
-			res = JSON.parse(res);
-			options.error(xhr, res);
+			try{
+				res = JSON.parse(res);
+				options.error(xhr, res);
+			}
+			catch(e){
+				Logger.error("cdm", {
+					klass: "Core",
+					method: "request",
+					message: "Received http request. res = " + xhr.responseText
+				});
+				options.error(xhr);
+			}
 		}
 	};
 
@@ -803,7 +813,9 @@ utils.strFormat = function(str){
 var SDK_ERROR_CODE = {
 	//Media
 	"M4001": "Unsupported media",
-	"M4002": "Don't accept media",
+	"M4002": "Permission denied",
+	"M4003": "Devices not found",
+	"M4004": "Unknown media error",
 	
 	//Channel
 	"C4001": "Failed allocate channel",
@@ -956,7 +968,18 @@ function _call(success, error){
 				});
 				
 				this.destroy();
-				this.error("M4002", SDK_ERROR_CODE["M4002"]);
+				
+				var name = e.name.toUpperCase();
+				if(name === "PERMISSIONDENIEDERROR" || name === "SECURITYERROR"){
+					this.error("M4002", SDK_ERROR_CODE["M4002"], e);
+				}
+				else if(name === "DEVICESNOTFOUNDERROR" || name === "NOTFOUNDERROR"){
+					this.error("M4003", SDK_ERROR_CODE["M4003"], e);
+				}
+				else{
+					this.error("M4004", SDK_ERROR_CODE["M4004"], e);
+				}
+				
 			}, this));
 		}
 	}
@@ -1019,7 +1042,7 @@ var PlayRTC = utils.Extend(utils.Event, {
 			audio: true,
 			data: true,
 			bandwidth: {
-				video: 2500,
+				video: 1500,
 				data: 1638400
 			}
 		};
@@ -2625,11 +2648,6 @@ var Call = utils.Extend(utils.Event, {
 			channelId: this.getChannelId(),
 			message: "Called requestTurn"
 		});
-		
-		if(window.location.protocol !== "https"){
-			this.playRtc.nagServer = this.playRtc.nagServer.replace("https", "http");
-			this.playRtc.nagServer = this.playRtc.nagServer.replace("8071", "8070");
-		}
 
 		var url = this.playRtc.nagServer + "/webrtcsignaling/v1/" + this.getToken() + "/turnserver?authToken=" + this.getNagToken();
 		request({
@@ -2772,36 +2790,40 @@ var Call = utils.Extend(utils.Event, {
 			}
 		}
 		else{
-			if(!this.playRtc.config.iceServers){
-				//nag turn timer interval
-				this.turnInterval = window.setInterval(utils.bind(function(){
-					this.requestTurn(utils.bind(function(result){
-						Logger.trace("cdm", {
-							klass: "Call",
-							method: "onConnect",
-							channelId: this.getChannelId(),
-							message: "Received nag turn server. iceServer = " + JSON.stringify(result)
-						});
-
-						var iceServers = [{
-							url: "turn:"+ result.data.turnserver.turnIp + ":" + result.data.turnserver.turnPort,
-							credential: result.data.turnserver.turnPw,
-							username: result.data.turnserver.turnId
-						}];
-						
-						this.playRtc.iceServers = iceServers;
-					}, this), utils.bind(function(){
-						window.clearInterval(this.turnInterval);
-						this.error("C4011", SDK_ERROR_CODE["C4011"]);
-					}, this));
-				}, this), 40000);
-			}
+			//nag turn timer interval
+			this._startTurnInterval();
 		}
 		
 		this.channeling.health();
 		this.healthInterval = window.setInterval(utils.bind(function(){
 			this.channeling.health();
 		}, this), 30000);
+	},
+	_startTurnInterval: function(){
+		if(!this.playRtc.config.iceServers){
+			//nag turn timer interval
+			this.turnInterval = window.setInterval(utils.bind(function(){
+				this.requestTurn(utils.bind(function(result){
+					Logger.trace("cdm", {
+						klass: "Call",
+						method: "onConnect",
+						channelId: this.getChannelId(),
+						message: "Received nag turn server. iceServer = " + JSON.stringify(result)
+					});
+	
+					var iceServers = [{
+						url: "turn:"+ result.data.turnserver.turnIp + ":" + result.data.turnserver.turnPort,
+						credential: result.data.turnserver.turnPw,
+						username: result.data.turnserver.turnId
+					}];
+					
+					this.playRtc.iceServers = iceServers;
+				}, this), utils.bind(function(){
+					window.clearInterval(this.turnInterval);
+					this.error("C4011", SDK_ERROR_CODE["C4011"]);
+				}, this));
+			}, this), 40000);
+		}
 	},
 	onOtherConnect: function(pid, uid){
 		if(this.turnInterval){
@@ -3003,6 +3025,15 @@ var Call = utils.Extend(utils.Event, {
 			p.peer.close();
 		}
 		delete this.peers[pid];
+		
+		var index = 0;
+		for(var peer in this.peers){
+			index++;
+		}
+		
+		if(index < 1){
+			this._startTurnInterval();
+		}
 		 
 		this.fire("_otherDisconnectChannel", pid, uid);
 	},
@@ -3602,7 +3633,7 @@ var Peer = utils.Extend(utils.Event, {
 			iceServers: null,
 			dataChannelEnabled: false,
 			bandwidth: {
-				video: 2500,
+				video: 1500,
 				data: 1638400
 			}
 		}, config);
@@ -3655,8 +3686,8 @@ var Peer = utils.Extend(utils.Event, {
 		}, this);
 
 		pc.onaddstream = utils.bind(function(e){
-			this.fire("addRemoteStream", this.id, this.uid, e.stream);
 			this.media = new Media(e.stream);
+			this.fire("addRemoteStream", this.id, this.uid, e.stream);
 		}, this);
 
 		pc.onsignalingstatechange = utils.bind(function(e){
@@ -3751,15 +3782,30 @@ var Peer = utils.Extend(utils.Event, {
 
 					this.fire("stateChange", "SUCCESS", this.id, this.uid); 
 				}
+				else{
+					Logger.trace("cdmn", {
+						klass: "Peer",
+						method: "setEvent",
+						channelId: this.call.getChannelId(),
+						tokenId: this.call.getToken(),
+						type: "p2p",
+						resultCode: "202",
+						connectTime: new Date().getTime(),			
+						message: "PID[" + this.call.getPid() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Reconnected P2P"
+					});
+				}
 
 				this.fire("stateChange", "CONNECTED", this.id, this.uid);
 				this.connected = true;
 			}
 			else if(connectionState === "DISCONNECTED"){
-				Logger.trace("cdm", {
+				Logger.trace("cdmn", {
 					klass: "Peer",
 					method: "setEvent",
 					channelId: this.call.getChannelId(),
+					tokenId: this.call.getToken(),
+					type: "p2p",
+					resultCode: "401",
 					message: "PID[" + this.call.getPid() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Disconnected P2P"
 				});
 				this.fire("stateChange", "DISCONNECTED", this.id, this.uid);
@@ -3890,6 +3936,28 @@ var Peer = utils.Extend(utils.Event, {
 		
 		return sdp.replace(mLine, newMLine.join(" "));
 	},
+	_getConstraints: function(){
+		var constraints;
+		if(utils.browser.name === "firefox"){
+			constraints = {
+				offerToReceiveAudio: true, 
+				offerToReceiveVideo: true
+			};
+		}
+		else{
+			constraints = {
+				optional: [
+					{ VoiceActivityDetection: false	},
+					{ DtlsSrtpKeyAgreement: true}
+				],
+				mandatory: {
+					OfferToReceiveAudio: true,
+					OfferToReceiveVideo: true
+				}
+			};
+		}
+		return constraints;
+	},
 	createOffer: function(){
 		this.createPeerConnection();
 		this.pc.createOffer(utils.bind(function(sessionDesc){
@@ -3915,10 +3983,7 @@ var Peer = utils.Extend(utils.Event, {
 			});
 			
 			this._error("C4008", SDK_ERROR_CODE["C4008"]);
-		}, this), {
-				offerToReceiveAudio: true, 
-				offerToReceiveVideo: true
-		});
+		}, this), this._getConstraints());
 	},
 	createAnswer: function(sdp){
 		if(!this.pc){
@@ -3972,11 +4037,7 @@ var Peer = utils.Extend(utils.Event, {
 			});
 			
 			this._error("C4008", SDK_ERROR_CODE["C4008"]);
-		}, this), {
-				offerToReceiveAudio: false, 
-				offerToReceiveVideo: false
-			}
-		);
+		}, this), this._getConstraints());
 	},
 	receiveAnwserSdp: function(sdp){
 		var pc = this.pc;
@@ -4754,6 +4815,7 @@ var Data = (function(){
 			this.dataChannel = this.peer.getPeerConnection().createDataChannel("channel", {
 				id: 1
 			});
+			this.fileReceiveStartTime = 0;
 			
 			this.dataChannel.binaryType = "arraybuffer";
 
@@ -5249,6 +5311,8 @@ var Data = (function(){
 				FileReceiveDatas[id].mimeType = progress.mimeType;
 				FileReceiveDatas[id].fragCount = progress.fragCount;
 				FileReceiveDatas[id].push(body);
+				
+				this.fileReceiveStartTime = new Date().getTime();
 			}
 			else{
 				progress.id = id;
@@ -5291,8 +5355,11 @@ var Data = (function(){
 						callType: this.peer.call.peers[this.peer.id].type === "offer" ? "callee" : "caller",
 						resultCode: "200",
 						fileRcvSize: FileReceiveDatas[id].totalSize,
+						fileRcvTime: new Date().getTime() - this.fileReceiveStartTime,
 						message: "PID[" + this.peer.id + "] Succeeded to receive a file. name = " + FileReceiveDatas[id].fileName
 					});
+					
+					this.fileReceiveStartTime = 0;
 				}
 				catch(e){
 					this.fire("error", {
@@ -5313,6 +5380,7 @@ var Data = (function(){
 						callType: this.peer.call.peers[this.peer.id].type === "offer" ? "callee" : "caller",
 						resultCode: "601",
 						fileRcvSize: 0,
+						fileRcvTime: 0,
 						message: "PID[" + this.peer.id + "] Failed to receive a file. name = " + FileReceiveDatas[id].fileName
 					});
 				}
