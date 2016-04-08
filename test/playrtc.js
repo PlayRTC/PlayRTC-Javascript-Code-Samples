@@ -3973,8 +3973,8 @@ var Peer = utils.Extend(utils.Event, {
 			
 			this._error("C4008", SDK_ERROR_CODE["C4008"]);
 		}, this), {
-				offerToReceiveAudio: false, 
-				offerToReceiveVideo: false
+				offerToReceiveAudio: true, 
+				offerToReceiveVideo: true
 			}
 		);
 	},
