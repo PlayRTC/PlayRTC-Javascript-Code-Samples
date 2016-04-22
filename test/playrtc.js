@@ -3,10 +3,10 @@
  * Copyright 2013, 2016 Heo Youngnam
  * 
  * project: PLAYRTC
- * version: 2.2.13
+ * version: 2.2.14
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-04-08 13:24 
+ * Date: 2016-04-22 14:18 
  */
 
 (function(factory){
@@ -3646,6 +3646,10 @@ var Peer = utils.Extend(utils.Event, {
 		this.connected = false;
 		this.oldStats = null;
 		this.statsReportTimer = null;
+		this.preferCodec = {
+			audio: "ISAC",
+			video: "H264"
+		};
 
 		this.fractionLost = this.call.playRtc.fractionLost || {
 			audio: [
@@ -3962,8 +3966,8 @@ var Peer = utils.Extend(utils.Event, {
 		this.createPeerConnection();
 		this.pc.createOffer(utils.bind(function(sessionDesc){
 			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, "VP8");
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, "ISAC");
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, "VP8");
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.preferCodec.audio);
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.preferCodec.video);
 
 			Logger.trace("cdm", {
 				klass: "Peer",
@@ -4016,8 +4020,8 @@ var Peer = utils.Extend(utils.Event, {
 		
 		pc.createAnswer(utils.bind(function(sessionDesc){
 			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, "VP8");
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, "ISAC");
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, "VP8");
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.preferCodec.audio);
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.preferCodec.video);
 
 			Logger.trace("cdm", {
 				klass: "Peer",
@@ -5548,7 +5552,7 @@ var Rest = {
 			 */
 			version: {
 				get: function(){
-					return "2.2.13";
+					return "2.2.14";
 				}
 			},
 			activeXversion: {
@@ -5564,7 +5568,7 @@ var Rest = {
 		});
 	}
 	else{
-		_.version = "2.2.13";
+		_.version = "2.2.14";
 		_.activeXversion = "1,0,0,60";
 		_.utils = utils;
 	}
