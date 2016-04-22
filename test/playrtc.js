@@ -6,7 +6,7 @@
  * version: 2.2.14
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-04-22 14:18 
+ * Date: 2016-04-22 14:25 
  */
 
 (function(factory){
@@ -3965,7 +3965,7 @@ var Peer = utils.Extend(utils.Event, {
 	createOffer: function(){
 		this.createPeerConnection();
 		this.pc.createOffer(utils.bind(function(sessionDesc){
-			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, "VP8");
+			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, this.preferCodec.video);
 			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.preferCodec.audio);
 			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.preferCodec.video);
 
@@ -4019,7 +4019,7 @@ var Peer = utils.Extend(utils.Event, {
 		}
 		
 		pc.createAnswer(utils.bind(function(sessionDesc){
-			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, "VP8");
+			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, this.preferCodec.video);
 			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.preferCodec.audio);
 			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.preferCodec.video);
 
