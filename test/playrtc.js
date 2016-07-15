@@ -6,7 +6,7 @@
  * version: 2.2.15
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-07-15 13:19 
+ * Date: 2016-07-15 14:49 
  */
 
 (function(factory){
@@ -3631,7 +3631,7 @@ var Peer = utils.Extend(utils.Event, {
 			iceServers: null,
 			dataChannelEnabled: false,
 			bandwidth: {
-				audio: 50,
+				audio: 64,
 				video: 1500,
 				data: 1638400
 			},
@@ -3898,15 +3898,14 @@ var Peer = utils.Extend(utils.Event, {
 		var ab = this.config.bandwidth.audio,
 			vb = this.config.bandwidth.video,
 			db = this.config.bandwidth.data,
-			aReg = new RegExp("a=rtpmap:(\\d+) " + this.config.preferCodec.audio + "/(:?\\d+)(:?/\\+d?)"),
 			vReg = new RegExp("a=rtpmap:(\\d+) " + this.config.preferCodec.video + "/(\\d+)");
 
-		ab = ab > 0 ? ab : 50;
+		var vvb = vb * 1025;
+		
 		sdp = sdp.replace(/b=AS([^\r\n]+\r\n)/g, "");
-		sdp = sdp.replace(/a=mid:audio\r\n/g, "a=mid:audio\r\nb=AS:200\r\n");
-		//sdp = sdp.replace("a=rtpmap:111 opus/48000/2", "a=rtpmap:111 opus/48000/2\r\na=fmtp:111 maxaveragebitrate=32000");
+		sdp = sdp.replace(/a=mid:audio\r\n/g, "a=mid:audio\r\nb=AS:" + (ab > 0 ? ab : 64) + "\r\n");
 		sdp = sdp.replace(/a=mid:video\r\n/g, "a=mid:video\r\nb=AS:" + (vb > 0 ? vb : 1500) + "\r\n");
-		sdp = sdp.replace(vReg, "a=rtpmap:$1 " + this.config.preferCodec.video + "/$2\r\na=fmtp:$1 x-google-start-bitrate=1000; x-google-min-bitrate=600; x-google-max-bitrate=" + (vb > 0 ? vb : 1500) + "; x-google-max-quantization=56");
+		sdp = sdp.replace(vReg, "a=rtpmap:$1 " + this.config.preferCodec.video + "/$2\r\na=fmtp:$1 x-google-start-bitrate=" + vvb + "; x-google-min-bitrate=" + vvb + "; x-google-max-bitrate=" + vvb + "; x-google-max-quantization=56");
 		sdp = sdp.replace(/a=mid:data\r\n/g, "a=mid:data\r\nb=AS:" + (db > 0 ? db : 1638400) + "\r\n");
 		
 		return sdp;
