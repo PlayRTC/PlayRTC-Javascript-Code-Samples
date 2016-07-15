@@ -6,7 +6,7 @@
  * version: 2.2.15
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-07-15 15:07 
+ * Date: 2016-07-15 15:10 
  */
 
 (function(factory){
@@ -3896,7 +3896,7 @@ var Peer = utils.Extend(utils.Event, {
 		}
 
 		var ab = this.config.bandwidth.audio,
-			vb = this.config.bandwidth.video,
+			vb = this.config.bandwidth.video * 1024,
 			db = this.config.bandwidth.data,
 			vReg = new RegExp("a=rtpmap:(\\d+) " + this.config.preferCodec.video + "/(\\d+)");
 
