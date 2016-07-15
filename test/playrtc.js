@@ -3,10 +3,10 @@
  * Copyright 2013, 2016 Heo Youngnam
  * 
  * project: PLAYRTC
- * version: 2.2.14
+ * version: 2.2.15
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-04-22 14:25 
+ * Date: 2016-07-15 11:06 
  */
 
 (function(factory){
@@ -1044,6 +1044,10 @@ var PlayRTC = utils.Extend(utils.Event, {
 			bandwidth: {
 				video: 1500,
 				data: 1638400
+			},
+			preferCodec: {
+				audio: "opus",
+				video: "VP8"
 			}
 		};
 		this.iceServers = [];
@@ -1819,7 +1823,7 @@ var PlayRTC = utils.Extend(utils.Event, {
 	 */
 	getPeerId: function(){
 		if(this.calling){
-			return this.calling.getPid();
+			return this.calling.getToken();
 		}
 		return null;
 	},
@@ -2626,18 +2630,6 @@ var Call = utils.Extend(utils.Event, {
 	getNagToken: function(){
 		return this.nagToken;
 	},
-	setPid: function(pid){
-		Logger.trace("cdm", {
-			klass: "Call",
-			method: "setPid",
-			channelId: this.getChannelId(),
-			message: "PID[" + pid + "] Set self pid"
-		});
-		this.pid = pid;
-	},
-	getPid: function(pid){
-		return this.pid;
-	},
 	getUid: function(uid){
 		return this.uid;
 	},
@@ -2743,7 +2735,8 @@ var Call = utils.Extend(utils.Event, {
 		peerConfig = {
 			iceServers: playRtc.iceServers,
 			dataChannelEnabled: playRtc.dataChannelEnabled,
-			bandwidth: playRtc.getConfig().bandwidth
+			bandwidth: playRtc.getConfig().bandwidth,
+			preferCodec: playRtc.getConfig().preferCodec
 		};
 
 		this.peers[pid].peer = new Peer(this, pid, this.peers[pid].uid, localStream, peerConfig);
@@ -2763,7 +2756,6 @@ var Call = utils.Extend(utils.Event, {
 	onConnect: function(pid, peers){
 		var p = null;
 
-		this.setPid(pid);
 		Logger.trace("cdm", {
 			klass: "Call",
 			method: "onConnect",
@@ -2854,10 +2846,16 @@ var Call = utils.Extend(utils.Event, {
 		};
 
 		if(!this.playRtc.hasEvent("ring")){
-			alert("You must create ring event.");
-			return false;
+			Logger.warn("cdm", {
+				klass: "Data",
+				method: "fileReceive",
+				channelId: this.peer.call.getChannelId(),
+				message: "You must create ring event."
+			});
+			
+			this.accept(pid);
 		}
-
+		
 		/**
 		 * Peer 간의 연결시, 먼저 붙어 있던 Peer 가 나중에 들어온 Peer 를 허가 해야 연결이 되는 서비스 플로우라면, 이때 먼저 들어온 Peer 에게 ring 이라는 이벤트가 호출된다. 이 이벤트 내에서 상대방의 연결 요청을 수락/거절 할 수 있다.해당 이벤트의 첫번째 파라미터 요소인 call 객체의 accept 또는 reject 메소드를 호출하여 수락/거절을 수행할 수 있다.
 		 * @event ring
@@ -3240,7 +3238,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 				command: "userdefined",
 				broadcast: id.length < 1 ? "yes" : "no",
 				sender: {
-					id: this.call.getPid()
+					id: this.call.getToken()
 				},
 				receiver: {
 					targets: id
@@ -3269,7 +3267,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 				commandType: "res",
 				sender: {
 					type: "peer",
-					id: this.call.getPid()
+					id: this.call.getToken()
 				}
 			},
 			body: {
@@ -3300,7 +3298,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 				commandType: "res",
 				sender: {
 					type: "peer",
-					id: this.call.getPid()
+					id: this.call.getToken()
 				}
 			},
 			body: {
@@ -3329,7 +3327,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 			header: {
 				command: "ready",
 				sender: {
-					id: this.call.getPid()
+					id: this.call.getToken()
 				}
 			},
 			body: {
@@ -3377,7 +3375,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 				command: "channel_close",
 				token: this.call.getToken(),
 				sender: {
-					id: this.call.getPid()
+					id: this.call.getToken()
 				}
 			},
 			body: {
@@ -3400,7 +3398,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 			header: {
 				command: "sdp",
 				sender: {
-					id: this.call.getPid()
+					id: this.call.getToken()
 				},
 				receiver: {
 					type: "peer",
@@ -3427,7 +3425,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 			header: {
 				command: "sdp",
 				sender: {
-					id: this.call.getPid()
+					id: this.call.getToken()
 				},
 				receiver: {
 					id: id
@@ -3453,7 +3451,7 @@ PlayRTC.Channeling = utils.Extend(utils.Event, {
 			header: {
 				command: "candidate",
 				sender: {
-					id: this.call.getPid()
+					id: this.call.getToken()
 				},
 				receiver: {
 					id: id
@@ -3633,8 +3631,13 @@ var Peer = utils.Extend(utils.Event, {
 			iceServers: null,
 			dataChannelEnabled: false,
 			bandwidth: {
+				audio: 50,
 				video: 1500,
 				data: 1638400
+			},
+			preferCodec: {
+				audio: "opus",
+				video: "VP8"
 			}
 		}, config);
 
@@ -3646,10 +3649,6 @@ var Peer = utils.Extend(utils.Event, {
 		this.connected = false;
 		this.oldStats = null;
 		this.statsReportTimer = null;
-		this.preferCodec = {
-			audio: "ISAC",
-			video: "H264"
-		};
 
 		this.fractionLost = this.call.playRtc.fractionLost || {
 			audio: [
@@ -3729,7 +3728,7 @@ var Peer = utils.Extend(utils.Event, {
 					candidate: "",
 					audioYn: this.call.playRtc.userMedia.audio ? "Y" : "N",
 					videoYn: this.call.playRtc.userMedia.video ? "Y" : "N",					
-					message: "PID[" + this.call.getPid() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Failed P2P connection"
+					message: "PID[" + this.call.getToken() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Failed P2P connection"
 				});
 				
 				this._error("P4001", SDK_ERROR_CODE["P4001"]);
@@ -3742,7 +3741,7 @@ var Peer = utils.Extend(utils.Event, {
 					klass: "Peer",
 					method: "setEvent",
 					channelId: this.call.getChannelId(),
-					message: "PID[" + this.call.getPid() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Connected P2P"
+					message: "PID[" + this.call.getToken() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Connected P2P"
 				});
 
 				if(!this.connected){
@@ -3780,7 +3779,7 @@ var Peer = utils.Extend(utils.Event, {
 							candidate: localCandidate,
 							audioYn: this.call.playRtc.userMedia.audio ? "Y" : "N",
 							videoYn: this.call.playRtc.userMedia.video ? "Y" : "N",					
-							message: "PID[" + this.call.getPid() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Connected P2P"
+							message: "PID[" + this.call.getToken() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Connected P2P"
 						});
 					}, this));
 
@@ -3795,7 +3794,7 @@ var Peer = utils.Extend(utils.Event, {
 						type: "p2p",
 						resultCode: "202",
 						connectTime: new Date().getTime(),			
-						message: "PID[" + this.call.getPid() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Reconnected P2P"
+						message: "PID[" + this.call.getToken() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Reconnected P2P"
 					});
 				}
 
@@ -3810,7 +3809,7 @@ var Peer = utils.Extend(utils.Event, {
 					tokenId: this.call.getToken(),
 					type: "p2p",
 					resultCode: "401",
-					message: "PID[" + this.call.getPid() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Disconnected P2P"
+					message: "PID[" + this.call.getToken() + "] UID[" + this.call.getUid() + "] OtherPID[" + this.id + "] OtherUID[" + this.uid + "] Disconnected P2P"
 				});
 				this.fire("stateChange", "DISCONNECTED", this.id, this.uid);
 			}
@@ -3887,7 +3886,7 @@ var Peer = utils.Extend(utils.Event, {
 			});
 		}
 	},
-	replaceBandWidth: function(sdp, preferCodec){
+	replaceBandWidth: function(sdp){
 		if (utils.browser.name === "firefox"){
 			return sdp;
 		}
@@ -3896,13 +3895,18 @@ var Peer = utils.Extend(utils.Event, {
 			return sdp;
 		}
 
-		var vb = this.config.bandwidth.video,
+		var ab = this.config.bandwidth.audio,
+			vb = this.config.bandwidth.video,
 			db = this.config.bandwidth.data,
-			reg = new RegExp("a=rtpmap:(\\d+) " + preferCodec + "/(\\d+)");
+			//aReg = new RegExp("a=rtpmap:(\\d+) " + this.config.preferCodec.audio + "/(\\d+)"),
+			vReg = new RegExp("a=rtpmap:(\\d+) " + this.config.preferCodec.video + "/(\\d+)");
 
+		ab = ab > 0 ? ab : 50;
 		sdp = sdp.replace(/b=AS([^\r\n]+\r\n)/g, "");
-		sdp = sdp.replace(/a=mid:video\r\n/g, "a=mid:video\r\nb=AS:" + (vb > 0 ? vb : 2500) + "\r\n");
-		sdp = sdp.replace(reg, "a=rtpmap:$1 " + preferCodec + "/$2\r\na=fmtp:$1 x-google-start-bitrate=1000; x-google-min-bitrate=600; x-google-max-bitrate=" + (vb > 0 ? vb : 2500) + "; x-google-max-quantization=56");
+		//sdp = sdp.replace(/a=mid:audio\r\n/g, "a=mid:audio\r\nb=AS:" + ab + "\r\n");
+		sdp = sdp.replace("a=rtpmap:111 opus/48000/2", "a=rtpmap:111 opus/48000/2\r\na=fmtp:111 maxaveragebitrate=32000\r\n");
+		sdp = sdp.replace(/a=mid:video\r\n/g, "a=mid:video\r\nb=AS:" + (vb > 0 ? vb : 1500) + "\r\n");
+		sdp = sdp.replace(vReg, "a=rtpmap:$1 " + this.config.preferCodec.video + "/$2\r\na=fmtp:$1 x-google-start-bitrate=1000; x-google-min-bitrate=600; x-google-max-bitrate=" + (vb > 0 ? vb : 1500) + "; x-google-max-quantization=56");
 		sdp = sdp.replace(/a=mid:data\r\n/g, "a=mid:data\r\nb=AS:" + (db > 0 ? db : 1638400) + "\r\n");
 		return sdp;
 	},
@@ -3965,9 +3969,9 @@ var Peer = utils.Extend(utils.Event, {
 	createOffer: function(){
 		this.createPeerConnection();
 		this.pc.createOffer(utils.bind(function(sessionDesc){
-			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, this.preferCodec.video);
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.preferCodec.audio);
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.preferCodec.video);
+			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp);
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.config.preferCodec.audio);
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.config.preferCodec.video);
 
 			Logger.trace("cdm", {
 				klass: "Peer",
@@ -4019,9 +4023,9 @@ var Peer = utils.Extend(utils.Event, {
 		}
 		
 		pc.createAnswer(utils.bind(function(sessionDesc){
-			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp, this.preferCodec.video);
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.preferCodec.audio);
-			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.preferCodec.video);
+			sessionDesc.sdp = this.replaceBandWidth(sessionDesc.sdp);
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=audio(:?.*)?/, this.config.preferCodec.audio);
+			sessionDesc.sdp = this.replacePreferCodec(sessionDesc.sdp, /m=video(:?.*)?/, this.config.preferCodec.video);
 
 			Logger.trace("cdm", {
 				klass: "Peer",
@@ -5025,9 +5029,7 @@ var Data = (function(){
 					}
 				}
 			}, this);
-			
-			
-	
+
 			for(;i < len; i++) {
 				char = text.charCodeAt(i);
 				view[j] = char >>> 8;
@@ -5236,8 +5238,12 @@ var Data = (function(){
 					}
 					
 					if(!this.hasEvent("message")){
-						alert("You must create message's event.");
-						return false;
+						Logger.warn("cdm", {
+							klass: "Data",
+							method: "textReceive",
+							channelId: this.peer.call.getChannelId(),
+							message: "You must create message's event."
+						});
 					}
 					
 					/**
@@ -5339,6 +5345,15 @@ var Data = (function(){
 					var blob = new Blob(FileReceiveDatas[id], {
 						type: FileReceiveDatas[id].mimeType
 					});
+					
+					if(!this.hasEvent("message")){
+						Logger.warn("cdm", {
+							klass: "Data",
+							method: "fileReceive",
+							channelId: this.peer.call.getChannelId(),
+							message: "You must create message's event."
+						});
+					}
 
 					this.fire("message", {
 						type: "binary",
@@ -5552,7 +5567,7 @@ var Rest = {
 			 */
 			version: {
 				get: function(){
-					return "2.2.14";
+					return "2.2.15";
 				}
 			},
 			activeXversion: {
@@ -5568,7 +5583,7 @@ var Rest = {
 		});
 	}
 	else{
-		_.version = "2.2.14";
+		_.version = "2.2.15";
 		_.activeXversion = "1,0,0,60";
 		_.utils = utils;
 	}
