@@ -6,7 +6,7 @@
  * version: 2.2.15
  * contact: cryingnavi@gmail.com
  * homepage: http://www.playrtc.com
- * Date: 2016-07-15 11:19 
+ * Date: 2016-07-15 11:22 
  */
 
 (function(factory){
