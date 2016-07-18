@@ -101,7 +101,7 @@
       <div class="col-md-7">
         <h2 class="h3">Remote</h2>
         <div class="well">
-          <video class="remote-video center-block" id="remoteVideo" controls></video>
+          <audio class="remote-video center-block" id="remoteVideo" controls></audio>
 
           <div class="text-center hide">
             <button class="btn btn-default btn-sm" id="saveFileFromRemote">
@@ -114,7 +114,7 @@
       <div class="col-md-3">
         <h2 class="h3">Local</h2>
         <div class="well">
-           <video class="local-video center-block" id="localVideo" muted controls></video>
+           <audio class="local-video center-block" id="localVideo" muted controls></audio>
           <div class="progress" id="sendFileToRemoteBarWrapper">
             <div class="progress-bar" id="sendFileToRemoteBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0px;">
               <!--<span class="sr-only">60% Complete</span>-->
@@ -183,7 +183,7 @@
       projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
       localMediaTarget: 'localVideo',
       remoteMediaTarget: 'remoteVideo',
-      video: true,
+      video: false,
       audio: true
     });
 
