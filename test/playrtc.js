@@ -2177,6 +2177,7 @@ var PlayRTC = utils.Extend(utils.Event, {
 		this.fire("otherDisconnectChannel", pid, uid);
 	},
 	error: function(code, desc, payload){
+		this.disconnectChannel();
 		this.fire("error", code, desc, payload);
 	},
 	/**
