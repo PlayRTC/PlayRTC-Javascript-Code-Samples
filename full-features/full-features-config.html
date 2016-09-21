@@ -48,6 +48,65 @@
       padding: 5px;
       width: 100%;
     }
+    
+    /* The switch - the box around the slider */
+	.switch {
+	  position: relative;
+	  display: inline-block;
+	  width: 60px;
+	  height: 34px;
+	}
+	
+	/* Hide default HTML checkbox */
+	.switch input {display:none;}
+	
+	/* The slider */
+	.slider {
+	  position: absolute;
+	  cursor: pointer;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+	  background-color: #ccc;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+	
+	.slider:before {
+	  position: absolute;
+	  content: "";
+	  height: 26px;
+	  width: 26px;
+	  left: 4px;
+	  bottom: 4px;
+	  background-color: white;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+	
+	input:checked + .slider {
+	  background-color: #2196F3;
+	}
+	
+	input:focus + .slider {
+	  box-shadow: 0 0 1px #2196F3;
+	}
+	
+	input:checked + .slider:before {
+	  -webkit-transform: translateX(26px);
+	  -ms-transform: translateX(26px);
+	  transform: translateX(26px);
+	}
+	
+	/* Rounded sliders */
+	.slider.round {
+	  border-radius: 34px;
+	}
+	
+	.slider.round:before {
+	  border-radius: 50%;
+	}
   </style>
 </head>
 
@@ -241,6 +300,18 @@
               <label for="turnIp">Bandwidth</label><br/>
               Video <input type="text" class="form-control" value="2500" id="videoBandwidth"> Data <input type="text" class="form-control" value="1638400" id="dataBandwidth">
             </div>
+            <div class="form-group">
+              <label for="turnIp">TurnOnly Use</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="turnIp">Ring Use</label><br/>
+				<label class="switch">
+				<input type="checkbox" name="ckbTurn" id="ckbTurn">
+					<div class="slider round"></div>
+				</label>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="switch">
+				<input type="checkbox" name="ckbRing" id="ckbRing">
+					<div class="slider round"></div>
+				</label>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
@@ -266,6 +337,9 @@
     };
     var g_video_bandwidth = 2500;
     var g_data_bandwidth = 1638400;
+    var g_ckbTurn = false;
+    var g_ckbRing = false;
+    
     $(':radio[name="optionsRadios"]').change(function(){
       if(this.value === "nagTurn"){
         $("#userTurnSetting").hide();
@@ -303,6 +377,8 @@
 
         g_video_bandwidth = parseInt($("#videoBandwidth").val());
         g_data_bandwidth = parseInt($("#dataBandwidth").val());
+        g_ckbTurn = $("#ckbTurn").is(":checked");
+        g_ckbRing = $("#ckbRing").is(":checked");
 
         alert("save completed!!");
     });
@@ -389,7 +465,9 @@
         bandwidth: {
           video: g_video_bandwidth,
           data: g_data_bandwidth
-        }
+        },
+        onlyTurn: g_ckbTurn,
+        ring: g_ckbRing
       });
 
       app.on('connectChannel', function (channelId) {
@@ -416,6 +494,15 @@
 
         getChannelList();
       });
+      
+      app.on('ring', function(pid, uid){
+  		if(window.confirm("수락?")){
+  			app.accept(pid);
+  		}
+  		else{
+  			app.reject(pid);
+  		}
+  	});
 
       app.on('addDataStream', function (pid, uid, dataChannel) {
         dataChannel.on('message', function (message) {
