@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>PlayRTC Tutorial</title>
+  <meta charset="utf-8">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .local-video {
+      width: 80px;
+      height: 60px;
+      z-index: 10;
+      position: relative;
+      top: -100px;
+      right: 30px;
+    }
+
+    .remote-video {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 320px;
+      height: 240px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-12">
+        <h1 class="page-header">PlayRTC Tutorial (Broadcast)</h1>
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="h3">Caller</h2>
+        <h3 class="h4">Create and Connect Channel</h3>
+        
+        <input id="radio_webrtc" type="radio" name="chk_info" value="webrtc" checked> 1:1 (Video+Audio)
+        <input id="radio_broadcast" type="radio" name="chk_info" value="broadcast"> 1:N (Audio Only)
+        <input id="radio_composite" type="radio" name="chk_info" value="composite"> N:N (Audio Only)
+
+        <form class="form-inline">
+          
+          <div class="form-group">
+            <label class="sr-only" for="createChannelId">Channel Id</label>
+            <input class="form-control" type="text" id="createChannelId" placeholder="Channel Id." value="" readonly>
+          </div>
+          
+          <button class="btn btn-default" id="createChannel">
+            <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Create Channel
+          </button>
+          
+          <button class="btn btn-default" id="deleteChannel">
+              <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Delete Channel
+          </button>
+          
+          <p id="text_abc">참여인원수:-</p>
+          
+        </form>
+
+        <video class="remote-video center-block" id="callerRemoteVideo"></video>
+        <video class="local-video pull-right" id="callerLocalVideo"></video>
+
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="h3">Callee</h2>
+        <h3 class="h4">Connect Channel</h3>
+        <form class="form-inline">
+          
+          <div class="form-group">
+            <label class="sr-only" for="connectChannelId">Channel Id</label>
+            <input class="form-control" type="text" id="connectChannelId" placeholder="Enter the channel id." value="">
+          </div>
+          
+          <button class="btn btn-default" id="connectChannel">
+            <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> Connect Channel
+          </button>
+          
+          <button class="btn btn-default" id="disconnectChannel">
+              <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span> Disconnect Channel
+          </button>
+        </form>
+
+        <video class="remote-video center-block" id="calleeRemoteVideo"></video>
+        <video class="local-video pull-right" id="calleeLocalVideo"></video>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!--<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>-->
+  <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+
+  <script src="playrtc.js"></script>
+  <script>
+    'use strict';
+
+    var createChannelButton = document.querySelector('#createChannel');
+    var createChannelId = document.querySelector('#createChannelId');
+    var deleteChannelButton = document.querySelector('#deleteChannel');
+    var appCaller;
+    
+//    appCaller = new PlayRTC({
+//      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
+//      localMediaTarget: "callerLocalVideo",
+//      remoteMediaTarget: "callerRemoteVideo"
+//                            video: false
+//    });
+
+//    appCaller.on('connectChannel', function(channelId) {
+//      createChannelId.value = channelId;
+//    });
+
+    createChannelButton.addEventListener('click', function(e) {
+                                         
+      var radioButton11 = document.getElementById("radio_webrtc");
+      var radioButton1N = document.getElementById("radio_broadcast");
+      var radioButtonNN = document.getElementById("radio_composite");
+
+      e.preventDefault();
+                                         
+      if(radioButton11.checked === true){
+          alert("1:1");
+          appCaller = new PlayRTC({
+            projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
+            localMediaTarget: "callerLocalVideo",
+            remoteMediaTarget: "callerRemoteVideo"
+          });
+                                         
+          appCaller.on('connectChannel', function(channelId) {
+            createChannelId.value = channelId;
+          });
+                                         
+          appCaller.createChannel();
+                                         
+      }else if(radio_broadcast.checked === true){
+          alert("1:N");
+          appCaller = new PlayRTC({
+            projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
+            localMediaTarget: "callerLocalVideo",
+            remoteMediaTarget: "callerRemoteVideo",
+            video: false
+          });
+                                         
+          appCaller.on('connectChannel', function(channelId) {
+            createChannelId.value = channelId;
+          });
+                                         
+          appCaller.createChannel({
+                 channel: {
+                    channelName: "Test Channel",
+                    channelType: "broadcast"
+                 }
+          });
+       
+      }else if(radio_composite.checked === true){
+         alert("N:N");
+         appCaller = new PlayRTC({
+            projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
+            localMediaTarget: "callerLocalVideo",
+            remoteMediaTarget: "callerRemoteVideo",
+            video: false
+         });
+                                         
+         appCaller.on('connectChannel', function(channelId) {
+           createChannelId.value = channelId;
+         });
+                                         
+         appCaller.createChannel({
+            channel: {
+              channelName: "Test Channel",
+              channelType: "composite"
+            }
+         });
+                                         
+      }
+                                         
+      
+    }, false);
+    
+    deleteChannelButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        appCaller.deleteChannel();
+                                         
+    }, false);
+  </script>
+  <script>
+    'use strict';
+
+    var connectChannelId = document.querySelector('#connectChannelId');
+    var connectChannelButton = document.querySelector('#connectChannel');
+    var disconnectChannelButton = document.querySelector('#disconnectChannel');
+    var appCallee;
+
+    appCallee = new PlayRTC({
+      projectKey: "60ba608a-e228-4530-8711-fa38004719c1",
+      localMediaTarget: "calleeLocalVideo",
+      remoteMediaTarget: "calleeRemoteVideo"
+    });
+
+    connectChannelButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      var channelId = connectChannelId.value;
+      if (!channelId) { return };
+      appCallee.connectChannel(channelId);
+    }, false);
+    
+    disconnectChannelButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        appCallee.disconnectChannel();
+    }, false);
+  </script>
+</body>
+
+</html>
