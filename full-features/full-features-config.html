@@ -267,6 +267,10 @@
         <div class="modal-body">
           <form class="form-inline">
             <div class="form-group">
+              <label for="turnIp">Project Key</label><br/>
+                <input type="text" class="form-control" value="60ba608a-e228-4530-8711-fa38004719c1" id="projectKey">
+            </div>
+            <div class="form-group">
               <label for="turnIp">TURN</label><br/>
               <div class="radio">
                 <label>
@@ -298,7 +302,7 @@
             </div>
             <div class="form-group">
               <label for="turnIp">Bandwidth</label><br/>
-              Video <input type="text" class="form-control" value="2500" id="videoBandwidth"> Data <input type="text" class="form-control" value="1638400" id="dataBandwidth">
+              Video <input type="text" class="form-control" value="1500" id="videoBandwidth"> Data <input type="text" class="form-control" value="1638400" id="dataBandwidth">
             </div>
             <div class="form-group">
               <label for="turnIp">TurnOnly Use</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="turnIp">Ring Use</label><br/>
@@ -328,6 +332,7 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
   <script>
+    var g_projectKey = "60ba608a-e228-4530-8711-fa38004719c1";
     var g_iceServers = null;
     var g_video_constrains = {
       minWidth: 640,
@@ -369,6 +374,8 @@
             username: username
           }];
         }
+        
+        g_projectKey = $("#projectKey").val();
 
         g_video_constrains.minWidth = parseInt($("#minWidth").val());
         g_video_constrains.minHeight = parseInt($("#minHeight").val());
@@ -379,6 +386,14 @@
         g_data_bandwidth = parseInt($("#dataBandwidth").val());
         g_ckbTurn = $("#ckbTurn").is(":checked");
         g_ckbRing = $("#ckbRing").is(":checked");
+        
+        channelListApp = new PlayRTC({
+            projectKey: g_projectKey,
+            video: false,
+            audio: false
+          });
+        $('#channelList').empty();
+        getChannelList();
 
         alert("save completed!!");
     });
@@ -419,7 +434,7 @@
     var app;
 
     var channelListApp = new PlayRTC({
-      projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+      projectKey: g_projectKey,
       video: false,
       audio: false
     });
@@ -449,6 +464,8 @@
 
           channelList.appendChild(channelListAnchor);
         }
+      }, function (arg1, arg2){
+    	  alert(arg2.error.message);
       });
     }
 
@@ -457,7 +474,7 @@
 
     function rtcStart(){
       app = new PlayRTC({
-        projectKey: '60ba608a-e228-4530-8711-fa38004719c1',
+        projectKey: g_projectKey,
         localMediaTarget: 'localVideo',
         remoteMediaTarget: 'remoteVideo',
         iceServers: g_iceServers,
