@@ -332,19 +332,147 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
   <script>
-    var g_projectKey = "60ba608a-e228-4530-8711-fa38004719c1";
-    var g_iceServers = null;
-    var g_video_constrains = {
-      minWidth: 640,
-      minHeight: 480,
-      maxWidth: 640,
-      maxHeight: 480
-    };
-    var g_video_bandwidth = 2500;
-    var g_data_bandwidth = 1638400;
-    var g_ckbTurn = false;
-    var g_ckbRing = false;
-    
+  if (window.sessionStorage) {
+	  
+		// Get saved data from sessionStorage
+	  	var sess_iceServers_value = sessionStorage.getItem('sess_iceServers_value');
+	  	var sess_ip = sessionStorage.getItem('sess_ip');
+	  	var sess_username = sessionStorage.getItem('sess_username');
+	  	var sess_pwd = sessionStorage.getItem('sess_pwd');
+	  	var sess_projectKey = sessionStorage.getItem('sess_projectKey');
+	  	var sess_minWidth = sessionStorage.getItem('sess_minWidth');
+	  	var sess_minHeight = sessionStorage.getItem('sess_minHeight');
+	  	var sess_maxWidth = sessionStorage.getItem('sess_maxWidth');
+	  	var sess_maxHeight = sessionStorage.getItem('sess_maxHeight');
+	  	var sess_videoBandwidth = sessionStorage.getItem('sess_videoBandwidth');
+	  	var sess_dataBandwidth = sessionStorage.getItem('sess_dataBandwidth');
+	  	var sess_ckbTurn = sessionStorage.getItem('sess_ckbTurn');
+	  	var sess_ckbRing = sessionStorage.getItem('sess_ckbRing');
+	   	
+	  	var g_iceServers = null;
+		if(!sess_iceServers_value && typeof sess_iceServers_value!=='string'){
+		  	$(':radio[value="nagTurn"]').prop("checked", true);
+		  	$(':radio[value="userTurn"]').prop("checked", false);
+			$("#userTurnSetting").hide();
+			
+		} else{
+			if(sess_iceServers_value==='userTurn'){
+				if(!sess_ip && typeof sess_ip!=='string'){
+					//Do something
+				}else{
+					$("#turnIp").val(sess_ip);
+				}
+				if(!sess_username && typeof sess_username!=='string'){
+					//Do something
+				}else{
+					$("#turnUsername").val(sess_username);
+				}
+				if(!sess_pwd && typeof sess_pwd!=='string'){
+					//Do something
+				}else{
+					$("#turnPwd").val(sess_pwd);
+				}
+	
+				g_iceServers = [{
+					url: "turn:" + sess_ip,
+					credential: sess_pwd,
+					username: sess_username
+				}];
+				
+				$(':radio[value="nagTurn"]').prop("checked", false);
+			  	$(':radio[value="userTurn"]').prop("checked", true);
+				$("#userTurnSetting").show();
+			}
+		}
+		
+		if(!sess_projectKey && typeof sess_projectKey!=='string'){
+			var g_projectKey = "60ba608a-e228-4530-8711-fa38004719c1";
+		}else{
+			var g_projectKey = sess_projectKey;
+		}
+		
+		var g_video_constrains = {
+			minWidth: 640,
+			minHeight: 480,
+			maxWidth: 640,
+			maxHeight: 480
+		};
+		if(!sess_minWidth && typeof sess_minWidth!=='string'){
+			g_video_constrains.minWidth = 640;
+		}else{
+			$("#minWidth").val(sess_minWidth);
+			g_video_constrains.minWidth = parseInt($("#minWidth").val());
+		}
+		if(!sess_minHeight && typeof sess_minHeight!=='string'){
+			g_video_constrains.minHeight = 480;
+		}else{
+			$("#minHeight").val(sess_minHeight);
+			g_video_constrains.minHeight = parseInt($("#minHeight").val());
+		}
+		if(!sess_maxWidth && typeof sess_maxWidth!=='string'){
+			g_video_constrains.maxWidth = 640;
+		}else{
+			$("#maxWidth").val(sess_maxWidth);
+			g_video_constrains.maxWidth = parseInt($("#maxWidth").val());
+		}
+		if(!sess_maxHeight && typeof sess_maxHeight!=='string'){
+			g_video_constrains.maxHeight = 480;
+		}else{
+			$("#maxHeight").val(sess_maxHeight);
+			g_video_constrains.maxHeight = parseInt($("#maxHeight").val());
+		}
+
+		if(!sess_videoBandwidth && typeof sess_videoBandwidth!=='string'){
+			var g_video_bandwidth = 2500;
+		}else{
+			var g_video_bandwidth = sess_videoBandwidth;
+		}
+		if(!sess_dataBandwidth && typeof sess_dataBandwidth!=='string'){
+			var g_data_bandwidth = 1638400;
+		}else{
+			var g_data_bandwidth = sess_dataBandwidth;
+		}
+		
+		if(!sess_ckbTurn && typeof sess_ckbTurn!=='string'){
+			//Do something
+		}else{
+			if(sess_ckbTurn === "false"){
+				$(':checkbox[id="ckbTurn"]').prop("checked", false);
+				var g_ckbTurn = false;
+			}else{
+				$(':checkbox[id="ckbTurn"]').prop("checked", true);
+				g_ckbTurn = $("#ckbTurn").is(":checked");
+				var g_ckbTurn = sess_ckbTurn;
+			}
+		}
+		
+		if(!sess_ckbRing && typeof sess_ckbRing!=='string'){
+			//Do something
+		}else{
+			if(sess_ckbRing === "false"){
+				$(':checkbox[id="ckbRing"]').prop("checked", false);
+				var g_ckbRing = false;
+			}else{
+				$(':checkbox[id="ckbRing"]').prop("checked", true);
+				g_ckbRing = $("#ckbRing").is(":checked");
+				var g_ckbRing = sess_ckbRing;
+			}
+		}
+  } else {
+		var g_projectKey = "60ba608a-e228-4530-8711-fa38004719c1";
+		var g_iceServers = null;
+		var g_video_constrains = {
+			minWidth: 640,
+			minHeight: 480,
+			maxWidth: 640,
+			maxHeight: 480
+		};
+		var g_video_bandwidth = 2500;
+		var g_data_bandwidth = 1638400;
+		var g_ckbTurn = false;
+		var g_ckbRing = false;
+  }
+
     $(':radio[name="optionsRadios"]').change(function(){
       if(this.value === "nagTurn"){
         $("#userTurnSetting").hide();
@@ -354,6 +482,7 @@
     });
 
     $("#configSave").click(function(){
+
         var iceServers_value = $(':radio[name="optionsRadios"]:checked').val();
 
         if(iceServers_value === "nagTurn"){
@@ -387,6 +516,19 @@
         g_ckbTurn = $("#ckbTurn").is(":checked");
         g_ckbRing = $("#ckbRing").is(":checked");
         
+		if(!g_projectKey){
+			alert("must set Project Key!!");
+			return;
+		}
+		if(!g_video_constrains.minWidth || !g_video_constrains.minHeight || !g_video_constrains.maxWidth || !g_video_constrains.maxHeight){
+			alert("must set Resolution!!");
+			return;
+		}
+		if(!g_video_bandwidth || !g_data_bandwidth){
+			alert("must set Bandwidth!!");
+			return;
+		}
+        
         channelListApp = new PlayRTC({
             projectKey: g_projectKey,
             video: false,
@@ -394,6 +536,23 @@
           });
         $('#channelList').empty();
         getChannelList();
+        
+        
+		//Save data to sessionStorage
+		sessionStorage.setItem('sess_iceServers_value', $(':radio[name="optionsRadios"]:checked').val());
+		sessionStorage.setItem('sess_ip', $("#turnIp").val());
+		sessionStorage.setItem('sess_username', $("#turnUsername").val());
+		sessionStorage.setItem('sess_pwd', $("#turnPwd").val());
+		sessionStorage.setItem('sess_projectKey', $("#projectKey").val());
+		sessionStorage.setItem('sess_minWidth', $("#minWidth").val());
+		sessionStorage.setItem('sess_minHeight', $("#minHeight").val());
+		sessionStorage.setItem('sess_maxWidth', $("#maxWidth").val());
+		sessionStorage.setItem('sess_maxHeight', $("#maxHeight").val());
+		sessionStorage.setItem('sess_videoBandwidth', $("#videoBandwidth").val());
+		sessionStorage.setItem('sess_dataBandwidth', $("#dataBandwidth").val());
+		sessionStorage.setItem('sess_ckbTurn', $("#ckbTurn").is(":checked"));
+		sessionStorage.setItem('sess_ckbRing', $("#ckbRing").is(":checked"));
+		
 
         alert("save completed!!");
     });
