@@ -305,7 +305,7 @@
               Video <input type="text" class="form-control" value="1500" id="videoBandwidth"> Data <input type="text" class="form-control" value="1638400" id="dataBandwidth">
             </div>
             <div class="form-group">
-              <label for="turnIp">TurnOnly Use</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="turnIp">Ring Use</label><br/>
+              <label for="turnIp">TurnOnly Use</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="turnIp">Ring Use</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="turnIp">Sound Only</label><br/>
 				<label class="switch">
 				<input type="checkbox" name="ckbTurn" id="ckbTurn">
 					<div class="slider round"></div>
@@ -313,6 +313,11 @@
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<label class="switch">
 				<input type="checkbox" name="ckbRing" id="ckbRing">
+					<div class="slider round"></div>
+				</label>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<label class="switch">
+				<input type="checkbox" name="ckbSoundOnly" id="ckbSoundOnly">
 					<div class="slider round"></div>
 				</label>
             </div>
@@ -348,6 +353,7 @@
 	  	var sess_dataBandwidth = sessionStorage.getItem('sess_dataBandwidth');
 	  	var sess_ckbTurn = sessionStorage.getItem('sess_ckbTurn');
 	  	var sess_ckbRing = sessionStorage.getItem('sess_ckbRing');
+	  	var sess_ckbSoundOnly = sessionStorage.getItem('sess_ckbSoundOnly');
 	   	
 	  	var g_iceServers = null;
 		if(!sess_iceServers_value && typeof sess_iceServers_value!=='string'){
@@ -441,7 +447,7 @@
 				var g_ckbTurn = false;
 			}else{
 				$(':checkbox[id="ckbTurn"]').prop("checked", true);
-				g_ckbTurn = $("#ckbTurn").is(":checked");
+				//g_ckbTurn = $("#ckbTurn").is(":checked");
 				var g_ckbTurn = sess_ckbTurn;
 			}
 		}
@@ -454,10 +460,24 @@
 				var g_ckbRing = false;
 			}else{
 				$(':checkbox[id="ckbRing"]').prop("checked", true);
-				g_ckbRing = $("#ckbRing").is(":checked");
+				//g_ckbRing = $("#ckbRing").is(":checked");
 				var g_ckbRing = sess_ckbRing;
 			}
 		}
+		
+		if(!sess_ckbSoundOnly && typeof sess_ckbSoundOnly!=='string'){
+			//Do something
+		}else{
+			if(sess_ckbSoundOnly === "false"){
+				$(':checkbox[id="ckbSoundOnly"]').prop("checked", false);
+				var g_video = true;
+			}else{
+				$(':checkbox[id="ckbSoundOnly"]').prop("checked", true);
+				//g_video = $("#ckbSoundOnly").is(":checked");
+				var g_video = false;
+			}
+		}
+		
   } else {
 		var g_projectKey = "60ba608a-e228-4530-8711-fa38004719c1";
 		var g_iceServers = null;
@@ -471,6 +491,7 @@
 		var g_data_bandwidth = 1638400;
 		var g_ckbTurn = false;
 		var g_ckbRing = false;
+		var g_video = true;
   }
 
     $(':radio[name="optionsRadios"]').change(function(){
@@ -513,8 +534,14 @@
 
         g_video_bandwidth = parseInt($("#videoBandwidth").val());
         g_data_bandwidth = parseInt($("#dataBandwidth").val());
+        
         g_ckbTurn = $("#ckbTurn").is(":checked");
         g_ckbRing = $("#ckbRing").is(":checked");
+        if($("#ckbSoundOnly").is(":checked")){
+        	g_video = false;
+        }else{
+        	g_video = true;
+        }
         
 		if(!g_projectKey){
 			alert("must set Project Key!!");
@@ -552,7 +579,7 @@
 		sessionStorage.setItem('sess_dataBandwidth', $("#dataBandwidth").val());
 		sessionStorage.setItem('sess_ckbTurn', $("#ckbTurn").is(":checked"));
 		sessionStorage.setItem('sess_ckbRing', $("#ckbRing").is(":checked"));
-		
+		sessionStorage.setItem('sess_ckbSoundOnly', $("#ckbSoundOnly").is(":checked"));
 
         alert("save completed!!");
     });
@@ -638,11 +665,7 @@
         remoteMediaTarget: 'remoteVideo',
         iceServers: g_iceServers,
         video: g_video_constrains,
-        userMedia: {
-			audio: true,
-			video: false
-		},
-		video: false,
+		video: g_video,
 		audio: true,
         bandwidth: {
           video: g_video_bandwidth,
