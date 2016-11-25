@@ -466,7 +466,7 @@
 		}
 		
 		if(!sess_ckbSoundOnly && typeof sess_ckbSoundOnly!=='string'){
-			//Do something
+			g_video = true;
 		}else{
 			if(sess_ckbSoundOnly === "false"){
 				$(':checkbox[id="ckbSoundOnly"]').prop("checked", false);
