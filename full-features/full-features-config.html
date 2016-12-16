@@ -440,7 +440,8 @@
 		}
 		
 		if(!sess_ckbTurn && typeof sess_ckbTurn!=='string'){
-			//Do something
+			$(':checkbox[id="ckbTurn"]').prop("checked", false);
+			var g_ckbTurn = false;
 		}else{
 			if(sess_ckbTurn === "false"){
 				$(':checkbox[id="ckbTurn"]').prop("checked", false);
@@ -453,7 +454,8 @@
 		}
 		
 		if(!sess_ckbRing && typeof sess_ckbRing!=='string'){
-			//Do something
+			$(':checkbox[id="ckbRing"]').prop("checked", false);
+			var g_ckbRing = false;
 		}else{
 			if(sess_ckbRing === "false"){
 				$(':checkbox[id="ckbRing"]').prop("checked", false);
@@ -466,7 +468,7 @@
 		}
 		
 		if(!sess_ckbSoundOnly && typeof sess_ckbSoundOnly!=='string'){
-			g_video = true;
+			var g_video = true;
 		}else{
 			if(sess_ckbSoundOnly === "false"){
 				$(':checkbox[id="ckbSoundOnly"]').prop("checked", false);
@@ -586,7 +588,7 @@
     
   </script>
 
-  <script src="//www.playrtc.com/sdk/js/playrtc.js"></script>
+  <script src="//www.playrtc.com/sdk/js/playrtc_test.js"></script>
   <script>
     'use strict';
 
