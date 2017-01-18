@@ -77,7 +77,7 @@ PlayRTC 서비스가 제공하는 채널 기능 사용
 - [Full Features Config](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features-config.html) 
   - config를 적용할 수 있습니다
 - [Full Features Config(TEST)](https://playrtc.github.io/PlayRTC-Javascript-Code-Samples/full-features/full-features-config_test.html) 
-  - (TEST)config를 적용할 수 있습니다
+  - (test)config를 적용할 수 있습니다
   
 <!--
 ### 실험실
